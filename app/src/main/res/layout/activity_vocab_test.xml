@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.dparnold.vocabaudio.MainActivity"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="bad"
+                android:layout_gravity="center"
+                android:textColor="#e4000f"
+                android:layout_marginRight="8dp"/>
+            <ProgressBar
+                android:id="@+id/progressBarLeft"
+                style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="false"
+                android:max="100"
+                android:minHeight="40dp"
+                android:minWidth="100dp"
+                android:progress="20"
+                android:rotation="180" />
+            <View
+                android:layout_width="2dp"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:background="#000000" />
+            <ProgressBar
+                android:id="@+id/progressBarRight"
+                style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:indeterminate="false"
+                android:max="100"
+                android:minHeight="40dp"
+                android:minWidth="100dp"
+                android:progress="60" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="good"
+                android:layout_gravity="center"
+                android:textColor="#2ab61b"/>
+        </LinearLayout>
+
+
+
+        <TextView
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/displayVocable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hallooo"
+            android:textSize="40sp"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:layout_height="match_parent">
+
+
+    </LinearLayout>
+</LinearLayout>
