@@ -1,9 +1,12 @@
 package com.dparnold.audiovocabulary;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.SharedPreferences;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -20,12 +23,13 @@ public class Settings extends AppCompatActivity {
     // Different views that have the settings values
     private Switch testSwitch;
     private Spinner vocablesNumber;
-
+    private EditText editTextDelay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
 
 
         // Get settings / 0 signifies the standart operating mode
@@ -36,6 +40,9 @@ public class Settings extends AppCompatActivity {
         testSwitch.setChecked(settings.getBoolean("testValue", false)); // Default value is false
         vocablesNumber = findViewById(R.id.spinner);
         vocablesNumber.setSelection(settings.getInt("vocablesNumber",1));
+        editTextDelay =  findViewById(R.id.editTextDelay);
+        editTextDelay.setText(String.valueOf(settings.getFloat("delay",(float)1.0)));
+
     }
     public void saveSettings(View view){
         // This method is called by the save button
@@ -44,7 +51,7 @@ public class Settings extends AppCompatActivity {
 
         // Write the values from the views to the editor
         editor.putBoolean("testValue", testSwitch.isChecked());
-
+        editor.putFloat("delay",Float.valueOf(editTextDelay.getText().toString()));
         // Commit the edits
         editor.commit();
 

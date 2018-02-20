@@ -1,5 +1,6 @@
 package com.dparnold.audiovocabulary;
 
+import android.content.SharedPreferences;
 import android.os.Handler;
 
 import android.content.Intent;
@@ -21,11 +22,17 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import static com.dparnold.audiovocabulary.Settings.SETTINGS_NAME;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    int mostRelevant= 10;
-    int timeBetween=1000;
+    int mostRelevant= 5;
+
+    // File where the settings are saved.
+    public static final String SETTINGS_NAME = "AppSettings";
+    // The Preferences object
+    private SharedPreferences settings;
 
     private int fileNumber = 1;
     private Button playButton;
@@ -40,10 +47,16 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewLang0;
     private TextView textViewLang1;
 
+    int delay;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Get settings
+        getSettings();
+
         db = com.dparnold.audiovocabulary.AppDatabase.getAppDatabase(this);
 
         // Getting the vocables from the database
@@ -83,6 +96,20 @@ public class MainActivity extends AppCompatActivity {
                     textViewLang0.setText("");
                     textViewLang1.setText("");
                     playButton.setText("Play");
+
+                    // Reset the runnables
+                    firstRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    };
+                    secondRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+
+                        }
+                    };
                 }
             }
         });
@@ -97,6 +124,17 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, com.dparnold.audiovocabulary.VocableList.class));
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        getSettings();
+
+        }
+
+
+
+
     public void play(){
 
         // This method uses handlers to play the audio files in the right order with the set delays
@@ -105,21 +143,21 @@ public class MainActivity extends AppCompatActivity {
         firstRunnable = new Runnable() {
             @Override
             public void run() {
-                //mediaPlayer.reset();
+                textViewLang1.setText("");
                 final int resource = MainActivity.this.getResources().getIdentifier("package1_en_"
                         + Util.int2StringDigits(vocables.get(vocablesIndex).getID(),3),
                         "raw", "com.dparnold.audiovocabulary");
                 mediaPlayer = MediaPlayer.create(MainActivity.this, resource);
-                mediaPlayer.start();
-                textViewLang0.setText(vocables.get(vocablesIndex).getLang0());
                 mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
                     public void onCompletion(MediaPlayer mediaPlayer) {
                         if(playing) {
-                            playHandler.postDelayed(secondRunnable, timeBetween);
+                            playHandler.postDelayed(secondRunnable, delay);
                         }
                     }
                 });
+                mediaPlayer.start();
+                textViewLang0.setText(vocables.get(vocablesIndex).getLang0());
             }
         };
         secondRunnable = new Runnable() {
@@ -130,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
                         + Util.int2StringDigits(vocables.get(vocablesIndex).getID(),3),
                         "raw", "com.dparnold.audiovocabulary");
                 mediaPlayer = MediaPlayer.create(MainActivity.this, resource);
-                mediaPlayer.start();
                 textViewLang1.setText(vocables.get(vocablesIndex).getLang1());
                 // Next vocable in the list
                 if(vocablesIndex == vocables.size()-1){
@@ -148,15 +185,21 @@ public class MainActivity extends AppCompatActivity {
                         if (playing) {
                             // Starting with the word in the known language again
                             textViewLang0.setText("");
-                            textViewLang1.setText("");
-                            playHandler.postDelayed(firstRunnable, timeBetween);
+                            playHandler.postDelayed(firstRunnable, delay);
                         }
                     }
                 });
+                mediaPlayer.start();
             }
         };
         // Start with the first runnable right away (delay = 0)
         playHandler.postDelayed(firstRunnable,0);
+    }
+
+    void getSettings() {
+        // 0 signifies the standard operating mode
+        settings = getSharedPreferences(SETTINGS_NAME, 0);
+        delay = (int) settings.getFloat("delay",(float)1.0)*1000;
     }
 
 
