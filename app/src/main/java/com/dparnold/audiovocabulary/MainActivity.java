@@ -27,7 +27,7 @@ import static com.dparnold.audiovocabulary.Settings.SETTINGS_NAME;
 
 public class MainActivity extends AppCompatActivity {
 
-    int mostRelevant= 5;
+    int mostRelevant= 30;
 
     // File where the settings are saved.
     public static final String SETTINGS_NAME = "AppSettings";
@@ -92,24 +92,15 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 else{
-                    mediaPlayer.reset();
+                    mediaPlayer.stop();
+                    mediaPlayer.release();
+                    mediaPlayer = null;
+
+
+
                     textViewLang0.setText("");
                     textViewLang1.setText("");
                     playButton.setText("Play");
-
-                    // Reset the runnables
-                    firstRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-
-                        }
-                    };
-                    secondRunnable = new Runnable() {
-                        @Override
-                        public void run() {
-
-                        }
-                    };
                 }
             }
         });
@@ -143,53 +134,65 @@ public class MainActivity extends AppCompatActivity {
         firstRunnable = new Runnable() {
             @Override
             public void run() {
-                textViewLang1.setText("");
-                final int resource = MainActivity.this.getResources().getIdentifier("package1_en_"
-                        + Util.int2StringDigits(vocables.get(vocablesIndex).getID(),3),
-                        "raw", "com.dparnold.audiovocabulary");
-                mediaPlayer = MediaPlayer.create(MainActivity.this, resource);
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        if(playing) {
-                            playHandler.postDelayed(secondRunnable, delay);
-                        }
+                if(playing) {
+                    if (mediaPlayer != null) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
                     }
-                });
-                mediaPlayer.start();
-                textViewLang0.setText(vocables.get(vocablesIndex).getLang0());
+                    textViewLang1.setText("");
+                    final int resource = MainActivity.this.getResources().getIdentifier("package1_en_"
+                                    + Util.int2StringDigits(vocables.get(vocablesIndex).getID(), 3),
+                            "raw", "com.dparnold.audiovocabulary");
+                    mediaPlayer = MediaPlayer.create(MainActivity.this, resource);
+                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mediaPlayer) {
+                            if (playing) {
+                                playHandler.postDelayed(secondRunnable, delay);
+                            }
+                        }
+                    });
+                    mediaPlayer.start();
+                    textViewLang0.setText(vocables.get(vocablesIndex).getLang0());
+                }
             }
         };
         secondRunnable = new Runnable() {
             @Override
             public void run() {
-                mediaPlayer.reset();
-                final int resource = MainActivity.this.getResources().getIdentifier("package1_es_"
-                        + Util.int2StringDigits(vocables.get(vocablesIndex).getID(),3),
-                        "raw", "com.dparnold.audiovocabulary");
-                mediaPlayer = MediaPlayer.create(MainActivity.this, resource);
-                textViewLang1.setText(vocables.get(vocablesIndex).getLang1());
-                // Next vocable in the list
-                if(vocablesIndex == vocables.size()-1){
-                    vocablesIndex =0;
-                    // Shuffling the list again
-                    // !!! can lead to having the same vocable twice
-                    Collections.shuffle(vocables);
-                }
-                else{
-                    vocablesIndex+=1;
-                }
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        if (playing) {
+                if(playing) {
+                    if (mediaPlayer != null) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                    }
+                    final int resource = MainActivity.this.getResources().getIdentifier("package1_es_"
+                                    + Util.int2StringDigits(vocables.get(vocablesIndex).getID(), 3),
+                            "raw", "com.dparnold.audiovocabulary");
+                    mediaPlayer = MediaPlayer.create(MainActivity.this, resource);
+                    textViewLang1.setText(vocables.get(vocablesIndex).getLang1());
+                    // Next vocable in the list
+                    if (vocablesIndex == vocables.size() - 1) {
+                        vocablesIndex = 0;
+                        // Shuffling the list again
+                        // !!! can lead to having the same vocable twice in a row
+                        Collections.shuffle(vocables);
+                    } else {
+                        vocablesIndex += 1;
+                    }
+                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mediaPlayer) {
+
                             // Starting with the word in the known language again
                             textViewLang0.setText("");
                             playHandler.postDelayed(firstRunnable, delay);
+
                         }
-                    }
-                });
-                mediaPlayer.start();
+                    });
+                    mediaPlayer.start();
+                }
             }
         };
         // Start with the first runnable right away (delay = 0)
