@@ -14,22 +14,33 @@
         android:layout_weight="4">
 
         <Button
-            android:id="@+id/playButton"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16sp"
-            android:text="Play" />
+            android:id="@+id/wakeLockButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="Wake lock"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"/>
+        <Button
+            android:id="@+id/sleepTimerButton"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="Sleep timer"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:onClick="sleepTimer"/>
+
+
+
 
         <TextView
             android:id="@+id/textViewLang0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/playButton"
+            android:layout_below="@+id/wakeLockButton"
             android:layout_centerHorizontal="true"
-            android:textSize="32sp"
             android:layout_marginTop="16sp"
-            android:text="lang0" />
+            android:text="lang0"
+            android:textSize="40sp" />
 
         <TextView
             android:id="@+id/textViewLang1"
@@ -38,8 +49,17 @@
             android:layout_below="@+id/textViewLang0"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16sp"
-            android:textSize="32sp"
-            android:text="lang1" />
+            android:text="lang1"
+            android:textSize="40sp" />
+        <Button
+            android:id="@+id/playButton"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/textViewLang1"
+            android:layout_marginTop="32sp"
+            android:text="Play"
+            android:layout_marginBottom="8dp" />
 
     </RelativeLayout>
 

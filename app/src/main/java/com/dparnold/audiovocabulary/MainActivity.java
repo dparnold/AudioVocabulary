@@ -1,5 +1,7 @@
 package com.dparnold.audiovocabulary;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Handler;
 
@@ -9,7 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.dparnold.audiovocabulary.helper.ReadVocablePackage;
@@ -36,16 +40,21 @@ public class MainActivity extends AppCompatActivity {
 
     private int fileNumber = 1;
     private Button playButton;
+    private Button wakeLockButton;
     private boolean playing = false;
+    private boolean wakeLock = false;
+    private boolean sleepTimerOn = false;
     private MediaPlayer mediaPlayer;
     private com.dparnold.audiovocabulary.AppDatabase db;
     private Handler playHandler = new Handler();
+    private Handler sleepHander = new Handler();
     private Runnable firstRunnable;
     private Runnable secondRunnable;
     private int vocablesIndex = 0;
     private List<Vocable> vocables;
     private TextView textViewLang0;
     private TextView textViewLang1;
+    private int sleepDelay = 20;
 
     int delay;
 
@@ -80,6 +89,30 @@ public class MainActivity extends AppCompatActivity {
         textViewLang1 = findViewById(R.id.textViewLang1);
         textViewLang0.setText("");
         textViewLang1.setText("");
+
+        wakeLockButton = findViewById(R.id.wakeLockButton);
+        wakeLockButton.setText("Screen locks automatically");
+
+        wakeLockButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wakeLock = !wakeLock;
+                if(wakeLock){
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    View root = findViewById(android.R.id.content);
+                    if (root != null)
+                        root.setKeepScreenOn(true);
+                    wakeLockButton.setText("Screen does not lock");
+                }
+                else{
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    View root = findViewById(android.R.id.content);
+                    if (root != null)
+                        root.setKeepScreenOn(false);
+                    wakeLockButton.setText("Screen locks automatically");
+                }
+            }
+        });
 
         playButton=findViewById(R.id.playButton);
         playButton.setOnClickListener(new View.OnClickListener() {
@@ -205,5 +238,35 @@ public class MainActivity extends AppCompatActivity {
         delay = (int) settings.getFloat("delay",(float)1.0)*1000;
     }
 
+    void sleepTimer (View view){
+        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+        alertDialog.setTitle("Sleep Timer");
+        alertDialog.setMessage("Minutes until the app closes:");
+        final NumberPicker numberPicker =  (NumberPicker) new NumberPicker(this);
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(6);
+        numberPicker.setValue(4);
+        numberPicker.setDisplayedValues( new String[] { "5", "10", "15", "20", "25", "30" } );
+        alertDialog.setView(numberPicker);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Set Timer",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        sleepDelay = numberPicker.getValue()*5;
+                        Log.e("info", Integer.toString(sleepDelay));
+                        sleepTimerOn =true;
+                        Runnable sleepRunnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                finish();
+                                System.exit(0);
+                            }
+                        };
+                        sleepHander.postDelayed(sleepRunnable, 1000*60*sleepDelay);
+                        dialog.dismiss();
+
+                    }
+                });
+        alertDialog.show();
+    }
 
 }
