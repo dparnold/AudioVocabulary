@@ -18,8 +18,11 @@ public interface VocableDAO {
     @Query("SELECT * FROM vocable WHERE ID IN (:IDs)")
     List<Vocable> loadAllByIds(int[] IDs);
 
-    @Query("SELECT * FROM vocable WHERE score < 3 ORDER BY score DESC, timesStudied DESC LIMIT (:number)")
+    @Query("SELECT * FROM vocable WHERE toStudy = 1 ORDER BY score DESC, timesStudied DESC LIMIT (:number)")
     List<Vocable> getMostRelevant(int number);
+
+    @Query("UPDATE vocable SET toStudy = 1 WHERE learnNextTime < (:timestamp)")
+    void updateDue(long timestamp);
 
     @Insert
     void insertAll(List<Vocable> vocables); //Vocable...

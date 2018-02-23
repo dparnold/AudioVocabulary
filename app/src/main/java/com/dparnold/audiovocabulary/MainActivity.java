@@ -23,6 +23,7 @@ import com.dparnold.audiovocabulary.helper.Util;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewLang0;
     private TextView textViewLang1;
     private int sleepDelay = 20;
+    private Timestamp timestamp;
 
     int delay;
 
@@ -63,11 +65,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Getting a timestamp for the current session
+        timestamp = new Timestamp(System.currentTimeMillis());
+
         // Get settings
         getSettings();
 
         db = com.dparnold.audiovocabulary.AppDatabase.getAppDatabase(this);
-
+        // Checking for vocabulary that is due
+        db.vocableDAO().updateDue(timestamp.getTime());
         // Getting the vocables from the database
         vocables=db.vocableDAO().getMostRelevant(mostRelevant);
         // Shuffling the list
@@ -152,8 +158,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
+        // Update the settings
         getSettings();
-
+        // update the most relevant vocables
+        vocables=db.vocableDAO().getMostRelevant(mostRelevant);
+        // Shuffling the list
+        Collections.shuffle(vocables);
         }
 
 

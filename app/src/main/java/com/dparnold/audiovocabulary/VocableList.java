@@ -32,13 +32,14 @@ public class VocableList extends AppCompatActivity {
         List<Vocable> vocables;
         vocables = db.vocableDAO().getAll();
 
-        table.addView(VocableTableRow.getHeaderTableRow(this, "ID","English","Spanish","Score","Times studied"));
+        table.addView(VocableTableRow.getHeaderTableRow(this, "ID","English","Spanish","Due","Score","#Studied"));
 
         for (int i = 0; i < vocables.size(); i++) {
             table.addView(VocableTableRow.getTableRow(this,
                     vocables.get(i).getID(),
                     vocables.get(i).getLang0(),
                     vocables.get(i).getLang1(),
+                    vocables.get(i).isToStudy(),
                     vocables.get(i).getScore(),
                     vocables.get(i).getTimesStudied()
                     ));

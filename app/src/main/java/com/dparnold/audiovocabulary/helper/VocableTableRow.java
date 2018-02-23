@@ -12,7 +12,7 @@ import android.widget.TextView;
  */
 
 public class VocableTableRow {
-    public static TableRow getTableRow(Context context, int ID, String lang0, String lang1, int score, int timesStudied){
+    public static TableRow getTableRow(Context context, int ID, String lang0, String lang1, boolean due, int score, int timesStudied){
         TableRow tableRow = new TableRow(context);
         tableRow.setBackgroundColor(Color.parseColor("#000000"));
         tableRow.setPadding(1,0,1,1);
@@ -37,6 +37,12 @@ public class VocableTableRow {
         lang1Text.setBackgroundColor(Color.parseColor("#FFFFFF"));
         tableRow.addView(lang1Text);
 
+        TextView dueText = new TextView(context);
+        dueText.setText(String.valueOf(due));
+        dueText.setPadding(16,16,16,0);
+        dueText.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        tableRow.addView(dueText);
+
         TextView scoreText = new TextView(context);
         scoreText.setText(String.valueOf(score));
         scoreText.setPadding(16,16,16,0);
@@ -51,7 +57,7 @@ public class VocableTableRow {
         return tableRow;
     }
 
-    public static TableRow getHeaderTableRow(Context context, String ID, String lang0, String lang1, String score, String timesStudied){
+    public static TableRow getHeaderTableRow(Context context, String ID, String lang0, String lang1, String due, String score, String timesStudied){
         TableRow tableRow = new TableRow(context);
         tableRow.setBackgroundColor(Color.parseColor("#000000"));
         tableRow.setPadding(1,0,1,8);
@@ -78,6 +84,12 @@ public class VocableTableRow {
         lang1Text.setPadding(16,16,16,0);
         lang1Text.setBackgroundColor(Color.parseColor("#FFFFFF"));
         tableRow.addView(lang1Text);
+
+        TextView dueText = new TextView(context);
+        dueText.setText(due);
+        dueText.setPadding(16,16,16,0);
+        dueText.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        tableRow.addView(dueText);
 
         TextView scoreText = new TextView(context);
         scoreText.setTypeface(null, Typeface.BOLD);

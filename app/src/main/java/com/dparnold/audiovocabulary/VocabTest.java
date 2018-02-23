@@ -9,9 +9,9 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.dparnold.audiovocabulary.R;
-
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +19,8 @@ import java.util.List;
 
 
 public class VocabTest extends AppCompatActivity {
+    private final long MILLISDAY = 24*60*60*1000;
+
     private LinearLayout buttonLayout;
     private Button showButton;
     private Button fineButton;
@@ -26,12 +28,12 @@ public class VocabTest extends AppCompatActivity {
     private TextView displayVocable;
     private LinearLayout.LayoutParams buttonParams;
     private List<Vocable> vocables;
-    private int counter;
-    private int studyNumber;
+    private int counter = 0;
+    private int studyNumber =30;
     private AppDatabase db;
     private ProgressBar leftProgress;
     private ProgressBar rightProgress;
-
+    private Timestamp timestamp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,8 @@ public class VocabTest extends AppCompatActivity {
         setContentView(R.layout.activity_vocab_test);
         db = AppDatabase.getAppDatabase(this);
 
-
+        // Getting a timestamp for the current session
+        timestamp = new Timestamp(System.currentTimeMillis());
 
         buttonLayout = findViewById(R.id.buttonLayout);
         displayVocable = findViewById(R.id.displayVocable);
@@ -49,6 +52,7 @@ public class VocabTest extends AppCompatActivity {
         showButton = new Button(this);
         showButton.setLayoutParams(buttonParams);
         showButton.setText("show");
+        showButton.setTextSize(20);
         showButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,8 +62,6 @@ public class VocabTest extends AppCompatActivity {
         buttonLayout.addView(showButton);
 
         // Getting vocabulary
-        counter=0;
-        studyNumber=10;
         vocables=db.vocableDAO().getMostRelevant(studyNumber);
 
         // Shuffling the list
@@ -87,6 +89,7 @@ public class VocabTest extends AppCompatActivity {
         againButton = new Button(this);
         againButton.setLayoutParams(buttonParams);
         againButton.setText("again");
+        againButton.setTextSize(20);
         againButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,6 +100,7 @@ public class VocabTest extends AppCompatActivity {
         fineButton = new Button(this);
         fineButton.setLayoutParams(buttonParams);
         fineButton.setText("fine");
+        fineButton.setTextSize(20);
         fineButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,27 +112,61 @@ public class VocabTest extends AppCompatActivity {
         buttonLayout.addView(fineButton);
 
         vocables.get(counter).setTimesStudied(vocables.get(counter).getTimesStudied()+1);
+        db.vocableDAO().updateVocable(vocables.get(counter));
 
-        counter+=1;
-        if(counter >= studyNumber){
-            counter = 0;
-        }
     }
 
     public void fine(View view){
         displayVocable.setText(vocables.get(counter).getLang0());
-        vocables.get(counter).setScore(vocables.get(counter).getScore()+1);
+        int score = vocables.get(counter).getScore();
+        vocables.get(counter).setScore(score+1);
+
+        // Set the study interval for the differnt levels
+        long studyInterval;
+        switch (score){
+            case 0: studyInterval = MILLISDAY; // Milliseconds of one day
+                break;
+            case 1: studyInterval = 2*MILLISDAY; // Two days
+                break;
+            case 2: studyInterval = 5*MILLISDAY;
+                break;
+            case 3: studyInterval =15*MILLISDAY;
+                break;
+            case 4: studyInterval = 30*MILLISDAY;
+                break;
+            case 5: studyInterval = 90*MILLISDAY;
+                break;
+            case 6: studyInterval = 200*MILLISDAY;
+                break;
+            default:studyInterval = 0;
+                break;
+        }
+        vocables.get(counter).setToStudy(false);
+
+        vocables.get(counter).setLearnNextTime(timestamp.getTime()+studyInterval);
         db.vocableDAO().updateVocable(vocables.get(counter));
         buttonLayout.removeAllViews();
         buttonLayout.addView(showButton);
+
+        counter+=1;
+        if(counter >= studyNumber){
+            Toast.makeText(VocabTest.this,"Well done!",Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
     }
 
     public void again(View view){
         displayVocable.setText(vocables.get(counter).getLang0());
-        vocables.get(counter).setScore(vocables.get(counter).getScore()-2);
+        vocables.get(counter).setScore(Math.max(vocables.get(counter).getScore()-1,0));
         db.vocableDAO().updateVocable(vocables.get(counter));
         buttonLayout.removeAllViews();
         buttonLayout.addView(showButton);
+
+        counter+=1;
+        if(counter >= studyNumber){
+            Toast.makeText(VocabTest.this,"Well done!",Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 }

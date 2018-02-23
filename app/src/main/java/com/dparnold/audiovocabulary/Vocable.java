@@ -19,6 +19,10 @@ public class Vocable {
     @ColumnInfo(name = "timesStudied")
     private int timesStudied;
 
+    @ColumnInfo(name= "toStudy")
+    private boolean toStudy = true;
+
+
     @ColumnInfo(name = "score")
     private int score;
 
@@ -64,6 +68,14 @@ public class Vocable {
         this.timesStudied = timesStudied;
     }
 
+    public boolean isToStudy() {
+        return toStudy;
+    }
+
+    public void setToStudy(boolean toStudy) {
+        this.toStudy = toStudy;
+    }
+
     public int getScore() {
         return score;
     }
@@ -79,4 +91,6 @@ public class Vocable {
     public void setLearnNextTime(long learnNextTime) {
         this.learnNextTime = learnNextTime;
     }
+
+
 }
