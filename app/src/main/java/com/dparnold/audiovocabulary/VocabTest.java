@@ -2,8 +2,10 @@ package com.dparnold.audiovocabulary;
 
 
 import android.graphics.Color;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -15,7 +17,8 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
-
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import static android.media.CamcorderProfile.get;
 
 
 public class VocabTest extends AppCompatActivity {
@@ -29,11 +32,12 @@ public class VocabTest extends AppCompatActivity {
     private LinearLayout.LayoutParams buttonParams;
     private List<Vocable> vocables;
     private int counter = 0;
-    private int studyNumber =30;
+    private int studyNumber =4;
     private AppDatabase db;
     private ProgressBar leftProgress;
     private ProgressBar rightProgress;
     private Timestamp timestamp;
+    private Toast finishedToast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,14 +73,16 @@ public class VocabTest extends AppCompatActivity {
         displayVocable.setText(vocables.get(counter).getLang0());
 
         // Get progress bars, set the color, set progress
-        leftProgress = findViewById(R.id.progressBarLeft);
         rightProgress = findViewById(R.id.progressBarRight);
-        leftProgress.getProgressDrawable().setColorFilter(
-                Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
         rightProgress.getProgressDrawable().setColorFilter(
-                Color.GREEN, android.graphics.PorterDuff.Mode.SRC_IN);
-        rightProgress.setProgress(vocables.get(counter).getScore()*20);
-        leftProgress.setProgress(vocables.get(counter).getScore()*-20);
+                ResourcesCompat.getColor(getResources(), R.color.colorAccent, null), android.graphics.PorterDuff.Mode.SRC_IN);
+        int progress = (int) ((vocables.get(counter).getScore()==0) ? 2: 100*vocables.get(counter).getScore()/6);
+        rightProgress.setProgress(progress);
+
+        // Setting the Toast messages for when the test is finished
+        finishedToast = Toast.makeText(VocabTest.this,"Well done!",Toast.LENGTH_SHORT);
+        finishedToast.setGravity(Gravity.CENTER,0, 0);
+
 
     }
 
@@ -117,7 +123,6 @@ public class VocabTest extends AppCompatActivity {
     }
 
     public void fine(View view){
-        displayVocable.setText(vocables.get(counter).getLang0());
         int score = vocables.get(counter).getScore();
         vocables.get(counter).setScore(score+1);
 
@@ -150,14 +155,17 @@ public class VocabTest extends AppCompatActivity {
 
         counter+=1;
         if(counter >= studyNumber){
-            Toast.makeText(VocabTest.this,"Well done!",Toast.LENGTH_SHORT).show();
+            finishedToast.show();
             finish();
+        }
+        else{
+            displayVocable.setText(vocables.get(counter).getLang0());
         }
 
     }
 
     public void again(View view){
-        displayVocable.setText(vocables.get(counter).getLang0());
+
         vocables.get(counter).setScore(Math.max(vocables.get(counter).getScore()-1,0));
         db.vocableDAO().updateVocable(vocables.get(counter));
         buttonLayout.removeAllViews();
@@ -165,8 +173,11 @@ public class VocabTest extends AppCompatActivity {
 
         counter+=1;
         if(counter >= studyNumber){
-            Toast.makeText(VocabTest.this,"Well done!",Toast.LENGTH_SHORT).show();
+            finishedToast.show();
             finish();
+        }
+        else {
+            displayVocable.setText(vocables.get(counter).getLang0());
         }
     }
 }
