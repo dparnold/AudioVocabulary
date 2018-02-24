@@ -31,3 +31,7 @@ files he or she is listening to by taking a short quiz. This eliminates
 memorized vocabulary and adds fresh words to the active list.
 
 
+## Credits and Thanks
+Even though I am the only one writing code for this project, there a few people/sources I want to thank.
+- Danielle and Janette for providing me with the audio files in English respectively in Spanish.
+- Amit Jakhu for providing his icon set which can be found at https://github.com/amitjakhu/dripicons "without restriction, in software programs, web templates and other materials intended for sale or distribution".
