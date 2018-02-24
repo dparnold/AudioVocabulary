@@ -10,37 +10,100 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="4">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
-        <Button
-            android:id="@+id/wakeLockButton"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="Wake lock"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"/>
-        <Button
-            android:id="@+id/sleepTimerButton"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="Sleep timer"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:onClick="sleepTimer"/>
+        <LinearLayout
+            android:id="@+id/iconBar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:background="@color/colorBar">
+
+
+            <ImageButton
+                android:id="@+id/wakeLockButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_lock"
+                android:background="@null"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:layout_margin="@dimen/buttonMargin"
+
+                />
+            <ImageButton
+                android:id="@+id/sleepTimerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_sleep_timer"
+                android:background="@null"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:onClick="sleepTimer"
+                android:layout_margin="@dimen/buttonMargin"
+
+                />
+            <ImageButton
+                android:id="@+id/vocabTest"
+                android:onClick="toVocabTest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_graduation"
+                android:background="@null"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:layout_margin="@dimen/buttonMargin"
+                />
+
+            <ImageButton
+                android:onClick="toVocabList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_blog"
+                android:background="@null"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:layout_margin="@dimen/buttonMargin"
+                />
+
+            <ImageButton
+                android:onClick="toSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_gear"
+                android:background="@null"
+                android:layout_weight="1"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:layout_margin="@dimen/buttonMargin"
+                 />
+
+        </LinearLayout>
+
 
 
 
 
         <TextView
             android:id="@+id/textViewLang0"
+            android:layout_below="@id/iconBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/wakeLockButton"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16sp"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="32sp"
             android:text="lang0"
-            android:textSize="40sp" />
+            android:textSize="50sp" />
 
         <TextView
             android:id="@+id/textViewLang1"
@@ -48,40 +111,32 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/textViewLang0"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="16sp"
-            android:text="lang1"
-            android:textSize="40sp" />
-        <Button
-            android:id="@+id/playButton"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@+id/textViewLang1"
             android:layout_marginTop="32sp"
-            android:text="Play"
-            android:layout_marginBottom="8dp" />
+            android:text="lang1"
+            android:textSize="50sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/colorBar"
+            android:gravity="center">
+            <Button
+                android:id="@+id/playButton"
+                android:layout_width="92dp"
+                android:layout_height="92dp"
+
+                android:text=""
+                android:background="@drawable/ic_media_play" />
+
+        </LinearLayout>
+
 
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/vocabTest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Vocabulary test"
-        android:onClick="toVocabTest"/>
-    <Button
-        android:onClick="toSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Settings"/>
 
-    <Button
-        android:onClick="toVocabList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Vocabulary"/>
+
+
+
 
 </LinearLayout>

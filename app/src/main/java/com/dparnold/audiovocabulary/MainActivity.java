@@ -10,11 +10,16 @@ import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dparnold.audiovocabulary.helper.ReadVocablePackage;
 import com.dparnold.audiovocabulary.helper.Util;
@@ -27,6 +32,9 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
+import static android.R.attr.fingerprintAuthDrawable;
+import static android.R.attr.id;
+import static android.support.v4.os.LocaleListCompat.create;
 import static com.dparnold.audiovocabulary.Settings.SETTINGS_NAME;
 
 
@@ -41,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     private int fileNumber = 1;
     private Button playButton;
-    private Button wakeLockButton;
+    private ImageButton wakeLockButton;
     private boolean playing = false;
     private boolean wakeLock = false;
     private boolean sleepTimerOn = false;
@@ -97,26 +105,10 @@ public class MainActivity extends AppCompatActivity {
         textViewLang1.setText("");
 
         wakeLockButton = findViewById(R.id.wakeLockButton);
-        wakeLockButton.setText("Screen locks automatically");
-
         wakeLockButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                wakeLock = !wakeLock;
-                if(wakeLock){
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    View root = findViewById(android.R.id.content);
-                    if (root != null)
-                        root.setKeepScreenOn(true);
-                    wakeLockButton.setText("Screen does not lock");
-                }
-                else{
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    View root = findViewById(android.R.id.content);
-                    if (root != null)
-                        root.setKeepScreenOn(false);
-                    wakeLockButton.setText("Screen locks automatically");
-                }
+                toggleWakeLock(v);
             }
         });
 
@@ -126,31 +118,29 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 playing = !playing;
                 if (playing){
-                    playButton.setText("Stop");
+                    playButton.setBackgroundResource(R.drawable.ic_media_stop);
                     play();
                 }
 
                 else{
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
-                    mediaPlayer = null;
-
-
-
-                    textViewLang0.setText("");
-                    textViewLang1.setText("");
-                    playButton.setText("Play");
+                    stopPlayback();
                 }
             }
         });
     }
     public void toVocabTest(View view){
+        if(playing){
+            stopPlayback();
+        }
         startActivity(new Intent(MainActivity.this, com.dparnold.audiovocabulary.VocabTest.class));
     }
     public void toSettings (View view){
         startActivity(new Intent(MainActivity.this, Settings.class));
     }
     public void toVocabList (View view){
+        if(playing){
+            stopPlayback();
+        }
         startActivity(new Intent(MainActivity.this, com.dparnold.audiovocabulary.VocableList.class));
     }
 
@@ -249,34 +239,76 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void sleepTimer (View view){
-        AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-        alertDialog.setTitle("Sleep Timer");
-        alertDialog.setMessage("Minutes until the app closes:");
-        final NumberPicker numberPicker =  (NumberPicker) new NumberPicker(this);
-        numberPicker.setMinValue(1);
-        numberPicker.setMaxValue(6);
-        numberPicker.setValue(4);
-        numberPicker.setDisplayedValues( new String[] { "5", "10", "15", "20", "25", "30" } );
-        alertDialog.setView(numberPicker);
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Set Timer",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        sleepDelay = numberPicker.getValue()*5;
-                        Log.e("info", Integer.toString(sleepDelay));
-                        sleepTimerOn =true;
-                        Runnable sleepRunnable = new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                                System.exit(0);
-                            }
-                        };
-                        sleepHander.postDelayed(sleepRunnable, 1000*60*sleepDelay);
-                        dialog.dismiss();
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.sleep_timer_dialog, null);
+        // Create a new AlerDialog with my custom theme
+        final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this, R.style.DialogTheme).create();
+        // this is set the view from XML inside AlertDialog
+        alertDialog.setView(alertLayout);
 
+        Button sleepTimerCancelButton = alertLayout.findViewById(R.id.sleepTimerCancelButton);
+        final NumberPicker sleepNumberPicker =  alertLayout.findViewById(R.id.sleepNumberPicker);
+        sleepNumberPicker.setMinValue(1);
+        sleepNumberPicker.setMaxValue(6);
+        sleepNumberPicker.setValue(4);
+        sleepNumberPicker.setDisplayedValues( new String[] { "5", "10", "15", "20", "25", "30" } );
+
+
+        sleepTimerCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
+        Button sleepTimerSetButton = alertLayout.findViewById(R.id.sleepTimerSetButton);
+        sleepTimerSetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                sleepDelay = sleepNumberPicker.getValue()*5;
+                Log.e("info", Integer.toString(sleepDelay));
+                sleepTimerOn =true;
+                Runnable sleepRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                        System.exit(0);
                     }
-                });
-        alertDialog.show();
+                };
+                sleepHander.postDelayed(sleepRunnable, 1000*60*sleepDelay);
+                alertDialog.dismiss();
+
+            }
+        });
+       alertDialog.show();
+    }
+    void toggleWakeLock(View view){
+        wakeLock = !wakeLock;
+        if(wakeLock){
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            View root = findViewById(android.R.id.content);
+            if (root != null)
+                root.setKeepScreenOn(true);
+            Toast.makeText(getApplicationContext(),"Screen will not be locked",Toast.LENGTH_SHORT).show();
+            wakeLockButton.setImageResource(R.drawable.ic_lock_open);
+        }
+        else{
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            View root = findViewById(android.R.id.content);
+            if (root != null)
+                root.setKeepScreenOn(false);
+            Toast.makeText(getApplicationContext(),"Screen will lock automatically", Toast.LENGTH_SHORT).show();
+            wakeLockButton.setImageResource(R.drawable.ic_lock);
+        }
+    }
+    private void stopPlayback(){
+        playing = false;
+        mediaPlayer.stop();
+        mediaPlayer.release();
+        mediaPlayer = null;
+        textViewLang0.setText("");
+        textViewLang1.setText("");
+        playButton.setBackgroundResource(R.drawable.ic_media_play);
     }
 
 }
