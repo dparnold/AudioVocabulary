@@ -35,6 +35,7 @@ import java.util.List;
 import static android.R.attr.fingerprintAuthDrawable;
 import static android.R.attr.id;
 import static android.support.v4.os.LocaleListCompat.create;
+import static com.dparnold.audiovocabulary.R.id.sleepNumberPicker;
 import static com.dparnold.audiovocabulary.Settings.SETTINGS_NAME;
 
 
@@ -48,8 +49,9 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences settings;
 
     private int fileNumber = 1;
-    private Button playButton;
+    private ImageButton playButton;
     private ImageButton wakeLockButton;
+    private ImageButton sleepTimerButton;
     private boolean playing = false;
     private boolean wakeLock = false;
     private boolean sleepTimerOn = false;
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewLang1;
     private int sleepDelay = 20;
     private Timestamp timestamp;
+    private Runnable sleepRunnable;
 
     int delay;
 
@@ -101,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
 
         textViewLang0 = findViewById(R.id.textViewLang0);
         textViewLang1 = findViewById(R.id.textViewLang1);
-        textViewLang0.setText("");
-        textViewLang1.setText("");
+        textViewLang0.setText("Welcome!");
+        textViewLang1.setText("¡Bienvenidos!");
 
         wakeLockButton = findViewById(R.id.wakeLockButton);
         wakeLockButton.setOnClickListener(new View.OnClickListener() {
@@ -112,13 +115,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        sleepTimerButton = findViewById(R.id.sleepTimerButton);
+
         playButton=findViewById(R.id.playButton);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 playing = !playing;
                 if (playing){
-                    playButton.setBackgroundResource(R.drawable.ic_media_stop);
+                    playButton.setImageResource(R.drawable.ic_stop);
                     play();
                 }
 
@@ -247,6 +252,30 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.setView(alertLayout);
 
         Button sleepTimerCancelButton = alertLayout.findViewById(R.id.sleepTimerCancelButton);
+        if(sleepTimerOn){
+            sleepTimerCancelButton.setText("Stop Timer");
+            sleepTimerCancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sleepTimerOn = false;
+                    sleepTimerButton.setImageResource(R.drawable.ic_sleep);
+                    sleepHander.removeCallbacksAndMessages(null);
+                    alertDialog.dismiss();
+                }
+            });
+        }
+        else{
+            sleepTimerCancelButton.setText("Cancel");
+            sleepTimerCancelButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    alertDialog.dismiss();
+                }
+            });
+        }
+
+
+
         final NumberPicker sleepNumberPicker =  alertLayout.findViewById(R.id.sleepNumberPicker);
         sleepNumberPicker.setMinValue(1);
         sleepNumberPicker.setMaxValue(6);
@@ -254,21 +283,23 @@ public class MainActivity extends AppCompatActivity {
         sleepNumberPicker.setDisplayedValues( new String[] { "5", "10", "15", "20", "25", "30" } );
 
 
-        sleepTimerCancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertDialog.dismiss();
-            }
-        });
+
         Button sleepTimerSetButton = alertLayout.findViewById(R.id.sleepTimerSetButton);
+        if(sleepTimerOn){
+            sleepTimerSetButton.setText("Reset Timer");
+        }
+        else{
+            sleepTimerSetButton.setText("Set Timer");
+        }
         sleepTimerSetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                sleepTimerOn =true;
+                sleepTimerButton.setImageResource(R.drawable.ic_sleep_active);
                 sleepDelay = sleepNumberPicker.getValue()*5;
                 Log.e("info", Integer.toString(sleepDelay));
-                sleepTimerOn =true;
-                Runnable sleepRunnable = new Runnable() {
+
+                sleepRunnable = new Runnable() {
                     @Override
                     public void run() {
                         finish();
@@ -290,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
             if (root != null)
                 root.setKeepScreenOn(true);
             Toast.makeText(getApplicationContext(),"Screen will not be locked",Toast.LENGTH_SHORT).show();
-            wakeLockButton.setImageResource(R.drawable.ic_lock_open);
+            wakeLockButton.setImageResource(R.drawable.ic_unlock);
         }
         else{
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -308,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer = null;
         textViewLang0.setText("");
         textViewLang1.setText("");
-        playButton.setBackgroundResource(R.drawable.ic_media_play);
+        playButton.setImageResource(R.drawable.ic_play);
     }
 
 }

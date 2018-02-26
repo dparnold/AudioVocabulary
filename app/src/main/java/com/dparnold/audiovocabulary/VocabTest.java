@@ -32,9 +32,8 @@ public class VocabTest extends AppCompatActivity {
     private LinearLayout.LayoutParams buttonParams;
     private List<Vocable> vocables;
     private int counter = 0;
-    private int studyNumber =4;
+    private int studyNumber =20;
     private AppDatabase db;
-    private ProgressBar leftProgress;
     private ProgressBar rightProgress;
     private Timestamp timestamp;
     private Toast finishedToast;

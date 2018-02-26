@@ -24,7 +24,7 @@
                 android:id="@+id/sleepNumberPicker"
                 android:theme="@style/NumberPicker"
                 android:layout_width="wrap_content"
-                android:layout_height="70dp"
+                android:layout_height="80dp"
                 android:layout_weight="1"
                 android:layout_marginRight="8dp"
                 android:layout_gravity="left"
@@ -38,21 +38,32 @@
                 android:text="Minutes"/>
     </LinearLayout>
     <LinearLayout
-        android:layout_margin="8dp"
+        android:layout_marginTop="8dp"
+        android:background="#000000"
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="left">
         <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/sleepTimerCancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel"/>
+            android:background="@color/colorBar"
+            android:text="Cancel"
+            android:layout_weight="1"
+            android:layout_marginRight="1dp"
+            />
         <Button
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:id="@+id/sleepTimerSetButton"
+            android:background="@color/colorBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Set Timer"/>
+            android:text="Set Timer"
+            android:layout_weight="1"
+
+            />
     </LinearLayout>
 
 </LinearLayout>

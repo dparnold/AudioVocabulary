@@ -12,83 +12,68 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1">
-
         <LinearLayout
-            android:id="@+id/iconBar"
+            android:id="@+id/iconBarBackground"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:orientation="horizontal"
-            android:background="@color/colorBar">
+            android:background="#000000"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/iconBar"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
+                android:background="@color/colorBar">
 
 
-            <ImageButton
-                android:id="@+id/wakeLockButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_lock"
-                android:background="@null"
-                android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:layout_margin="@dimen/buttonMargin"
+                <ImageButton
+                    android:id="@+id/wakeLockButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_lock"
+                    android:background="@null"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:layout_margin="@dimen/buttonMargin"
 
-                />
-            <ImageButton
-                android:id="@+id/sleepTimerButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_sleep_timer"
-                android:background="@null"
-                android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:onClick="sleepTimer"
-                android:layout_margin="@dimen/buttonMargin"
+                    />
+                <ImageButton
+                    android:id="@+id/sleepTimerButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_sleep"
+                    android:background="@null"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:onClick="sleepTimer"
+                    android:layout_margin="@dimen/buttonMargin"
 
-                />
-            <ImageButton
-                android:id="@+id/vocabTest"
-                android:onClick="toVocabTest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_graduation"
-                android:background="@null"
-                android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:layout_margin="@dimen/buttonMargin"
-                />
+                    />
 
-            <ImageButton
-                android:onClick="toVocabList"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_blog"
-                android:background="@null"
-                android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:layout_margin="@dimen/buttonMargin"
-                />
 
-            <ImageButton
-                android:onClick="toSettings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_gear"
-                android:background="@null"
-                android:layout_weight="1"
-                android:scaleType="fitCenter"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:layout_margin="@dimen/buttonMargin"
-                 />
 
+                <ImageButton
+                    android:onClick="toSettings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_settings"
+                    android:background="@null"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:layout_margin="@dimen/buttonMargin"
+                    />
+
+            </LinearLayout>
         </LinearLayout>
+
+
 
 
 
@@ -96,7 +81,7 @@
 
         <TextView
             android:id="@+id/textViewLang0"
-            android:layout_below="@id/iconBar"
+            android:layout_below="@id/iconBarBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -118,18 +103,59 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:background="@color/colorBar"
-            android:gravity="center">
-            <Button
-                android:id="@+id/playButton"
-                android:layout_width="92dp"
-                android:layout_height="92dp"
+            android:background="#000000"
+            android:layout_alignParentBottom="true">
 
-                android:text=""
-                android:background="@drawable/ic_media_play" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="1dp"
+                android:layout_height="80dp"
+                android:background="@color/colorBar"
+                android:gravity="center"
+                android:orientation="horizontal"
+                >
+                <ImageButton
+                    android:id="@+id/vocabTest"
+                    android:onClick="toVocabTest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_test"
+                    android:background="@null"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:layout_margin="@dimen/buttonMargin"
+                    />
+                <ImageButton
+                    android:id="@+id/playButton"
+                    android:src="@drawable/ic_play"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:layout_margin="@dimen/buttonMargin"
+                    />
 
+
+                <ImageButton
+                    android:onClick="toVocabList"
+                    android:src="@drawable/ic_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:layout_weight="1"
+                    android:scaleType="fitCenter"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:layout_margin="@dimen/buttonMargin"
+                    />
+            </LinearLayout>
         </LinearLayout>
+
 
 
     </RelativeLayout>
