@@ -17,6 +17,8 @@ Audiovocabulary has one goal:
 Enable the user to study vocabulary as effective as possible
 during the many hours when it is not possible to fully focus.
 
+## Current Status Video
+[![Current Video](https://img.youtube.com/vi/Sq4J61-vS3I/0.jpg)](https://www.youtube.com/watch?v=Sq4J61-vS3I)
 ## System
 - The user loads a so-called package, which contains the
 vocabulary and the audio files. These are put to a SQL database.
