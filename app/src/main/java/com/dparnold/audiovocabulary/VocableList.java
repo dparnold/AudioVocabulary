@@ -39,7 +39,7 @@ public class VocableList extends AppCompatActivity {
                     vocables.get(i).getID(),
                     vocables.get(i).getLang0(),
                     vocables.get(i).getLang1(),
-                    vocables.get(i).isToStudy(),
+                    vocables.get(i).isToTest(),
                     vocables.get(i).getScore(),
                     vocables.get(i).getTimesStudied()
                     ));

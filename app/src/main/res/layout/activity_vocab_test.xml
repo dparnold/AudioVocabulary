@@ -15,31 +15,42 @@
         android:layout_weight="1">
 
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:background="@color/colorBar">
+            android:background="@color/colorBar"
+            >
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/progressBarRight"
                 android:text="Progress:"
                 android:layout_marginRight="8dp"
+                android:layout_centerVertical="true"
                 android:textColor="@color/colorIcons"/>
             <ProgressBar
                 android:id="@+id/progressBarRight"
                 style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
+                android:layout_centerInParent="true"
                 android:indeterminate="false"
                 android:max="100"
                 android:minHeight="40dp"
                 android:minWidth="100dp"
                 android:progress="2" />
-
-        </LinearLayout>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="8dp"
+                android:layout_centerVertical="true"
+                android:text="Ignore"
+                android:gravity="right"
+                android:onClick="ignore"
+                />
+        </RelativeLayout>
 
 
 

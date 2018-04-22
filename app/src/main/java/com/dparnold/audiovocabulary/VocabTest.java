@@ -33,6 +33,7 @@ public class VocabTest extends AppCompatActivity {
     private List<Vocable> vocables;
     private int counter = 0;
     private int studyNumber =20;
+    private int maxScore = 6;
     private AppDatabase db;
     private ProgressBar rightProgress;
     private Timestamp timestamp;
@@ -75,7 +76,7 @@ public class VocabTest extends AppCompatActivity {
         rightProgress = findViewById(R.id.progressBarRight);
         rightProgress.getProgressDrawable().setColorFilter(
                 ResourcesCompat.getColor(getResources(), R.color.colorAccent, null), android.graphics.PorterDuff.Mode.SRC_IN);
-        int progress = (int) ((vocables.get(counter).getScore()==0) ? 2: 100*vocables.get(counter).getScore()/6);
+        int progress = (int) ((vocables.get(counter).getScore()==0) ? 2: 100*vocables.get(counter).getScore()/maxScore);
         rightProgress.setProgress(progress);
 
         // Setting the Toast messages for when the test is finished
@@ -120,7 +121,20 @@ public class VocabTest extends AppCompatActivity {
         db.vocableDAO().updateVocable(vocables.get(counter));
 
     }
+    public void ignore (View view){
+        vocables.get(counter).setScore(maxScore);
+        vocables.get(counter).setToTest(false);
+        db.vocableDAO().updateVocable(vocables.get(counter));
 
+        counter+=1;
+        if(counter >= studyNumber){
+            finishedToast.show();
+            finish();
+        }
+        else{
+            displayVocable.setText(vocables.get(counter).getLang0());
+        }
+    }
     public void fine(View view){
         int score = vocables.get(counter).getScore();
         vocables.get(counter).setScore(score+1);
@@ -145,9 +159,13 @@ public class VocabTest extends AppCompatActivity {
             default:studyInterval = 0;
                 break;
         }
-        vocables.get(counter).setToStudy(false);
-
+        // Prevent this vocable from showing up in the next test
+        vocables.get(counter).setToTest(false);
+        // Remove the vocable from the ones to listen to
+        vocables.get(counter).setToListen(false);
+        // Set the time of the next studying 
         vocables.get(counter).setLearnNextTime(timestamp.getTime()+studyInterval);
+        // Update vocable
         db.vocableDAO().updateVocable(vocables.get(counter));
         buttonLayout.removeAllViews();
         buttonLayout.addView(showButton);
@@ -164,8 +182,15 @@ public class VocabTest extends AppCompatActivity {
     }
 
     public void again(View view){
-
+        // Prevent this vocable from showing up in the next test
+        vocables.get(counter).setToTest(false);
+        // Reduce the score by 1 or keep it at 0
         vocables.get(counter).setScore(Math.max(vocables.get(counter).getScore()-1,0));
+        // Vocable will appear in the next days test
+        vocables.get(counter).setLearnNextTime(timestamp.getTime()+MILLISDAY);
+        // The user has to listen to the vocable
+        vocables.get(counter).setToListen(true);
+        // Update the vocable
         db.vocableDAO().updateVocable(vocables.get(counter));
         buttonLayout.removeAllViews();
         buttonLayout.addView(showButton);

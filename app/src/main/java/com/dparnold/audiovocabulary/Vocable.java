@@ -19,9 +19,11 @@ public class Vocable {
     @ColumnInfo(name = "timesStudied")
     private int timesStudied;
 
-    @ColumnInfo(name= "toStudy")
-    private boolean toStudy = true;
+    @ColumnInfo(name= "toTest")
+    private boolean toTest = true;
 
+    @ColumnInfo(name= "toListen")
+    private boolean toListen = true;
 
     @ColumnInfo(name = "score")
     private int score;
@@ -34,6 +36,14 @@ public class Vocable {
         this.ID=ID;
         this.lang0=lang0;
         this.lang1=lang1;
+    }
+
+    public boolean isToListen() {
+        return toListen;
+    }
+
+    public void setToListen(boolean toListen) {
+        this.toListen = toListen;
     }
 
     public int getID() {
@@ -68,12 +78,12 @@ public class Vocable {
         this.timesStudied = timesStudied;
     }
 
-    public boolean isToStudy() {
-        return toStudy;
+    public boolean isToTest() {
+        return toTest;
     }
 
-    public void setToStudy(boolean toStudy) {
-        this.toStudy = toStudy;
+    public void setToTest(boolean toTest) {
+        this.toTest = toTest;
     }
 
     public int getScore() {
