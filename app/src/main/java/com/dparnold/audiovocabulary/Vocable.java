@@ -7,14 +7,14 @@ import android.arch.persistence.room.PrimaryKey;
 
 @Entity
 public class Vocable {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     private int ID;
 
-    @ColumnInfo(name = "lang0")
-    private String lang0;
+    @ColumnInfo(name = "langKnown")
+    private String langKnown;
 
-    @ColumnInfo(name = "lang1")
-    private String lang1;
+    @ColumnInfo(name = "langForeign")
+    private String langForeign;
 
     @ColumnInfo(name = "timesStudied")
     private int timesStudied;
@@ -31,11 +31,9 @@ public class Vocable {
     @ColumnInfo(name = "learnNextTime")
     private long learnNextTime;
 
-
-    public Vocable(int ID, String lang0, String lang1){
-        this.ID=ID;
-        this.lang0=lang0;
-        this.lang1=lang1;
+    public Vocable(String langKnown, String langForeign){
+        this.langKnown = langKnown;
+        this.langForeign = langForeign;
     }
 
     public boolean isToListen() {
@@ -54,20 +52,20 @@ public class Vocable {
         this.ID = ID;
     }
 
-    public String getLang0() {
-        return lang0;
+    public String getLangKnown() {
+        return langKnown;
     }
 
-    public void setLang0(String lang0) {
-        this.lang0 = lang0;
+    public void setLangKnown(String langKnown) {
+        this.langKnown = langKnown;
     }
 
-    public String getLang1() {
-        return lang1;
+    public String getLangForeign() {
+        return langForeign;
     }
 
-    public void setLang1(String lang1) {
-        this.lang1 = lang1;
+    public void setLangForeign(String langForeign) {
+        this.langForeign = langForeign;
     }
 
     public int getTimesStudied() {

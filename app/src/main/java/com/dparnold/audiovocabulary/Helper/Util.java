@@ -1,9 +1,7 @@
-package com.dparnold.audiovocabulary.helper;
+package com.dparnold.audiovocabulary.Helper;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static android.R.id.list;
 
 /**
  * Created by dominik on 2/5/18.

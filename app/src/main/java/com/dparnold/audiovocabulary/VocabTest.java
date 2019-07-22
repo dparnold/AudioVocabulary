@@ -1,7 +1,6 @@
 package com.dparnold.audiovocabulary;
 
 
-import android.graphics.Color;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static android.media.CamcorderProfile.get;
 
 
@@ -70,7 +68,7 @@ public class VocabTest extends AppCompatActivity {
 
         // Shuffling the list
         Collections.shuffle(vocables);
-        displayVocable.setText(vocables.get(counter).getLang0());
+        displayVocable.setText(vocables.get(counter).getLangKnown());
 
         // Get progress bars, set the color, set progress
         rightProgress = findViewById(R.id.progressBarRight);
@@ -88,7 +86,7 @@ public class VocabTest extends AppCompatActivity {
 
     public void show(View view){
 
-        displayVocable.setText(vocables.get(counter).getLang1());
+        displayVocable.setText(vocables.get(counter).getLangForeign());
 
         buttonLayout.removeAllViews();
 
@@ -132,7 +130,7 @@ public class VocabTest extends AppCompatActivity {
             finish();
         }
         else{
-            displayVocable.setText(vocables.get(counter).getLang0());
+            displayVocable.setText(vocables.get(counter).getLangKnown());
         }
     }
     public void fine(View view){
@@ -176,7 +174,7 @@ public class VocabTest extends AppCompatActivity {
             finish();
         }
         else{
-            displayVocable.setText(vocables.get(counter).getLang0());
+            displayVocable.setText(vocables.get(counter).getLangKnown());
         }
 
     }
@@ -201,7 +199,7 @@ public class VocabTest extends AppCompatActivity {
             finish();
         }
         else {
-            displayVocable.setText(vocables.get(counter).getLang0());
+            displayVocable.setText(vocables.get(counter).getLangKnown());
         }
     }
 }

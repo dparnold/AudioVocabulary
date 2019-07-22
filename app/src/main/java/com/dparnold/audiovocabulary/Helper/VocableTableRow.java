@@ -1,9 +1,8 @@
-package com.dparnold.audiovocabulary.helper;
+package com.dparnold.audiovocabulary.Helper;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.view.View;
 import android.widget.TableRow;
 import android.widget.TextView;
 

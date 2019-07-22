@@ -31,6 +31,9 @@ public interface VocableDAO {
     @Delete
     void delete(Vocable vocable);
 
+    @Query("DELETE FROM vocable")
+    void nukeTable();
+
     @Update
     void updateVocable(Vocable vocable);
 }

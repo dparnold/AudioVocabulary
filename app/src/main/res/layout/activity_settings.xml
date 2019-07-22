@@ -76,6 +76,7 @@
                 <EditText
                     android:layout_weight="1"
                     android:id="@+id/editTextDelay"
+                    android:textColor="@color/colorAccent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"/>

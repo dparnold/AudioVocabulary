@@ -87,7 +87,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_marginTop="32sp"
-            android:text="lang0"
+            android:text="langKnown"
             android:textSize="50sp" />
 
         <TextView
@@ -97,7 +97,7 @@
             android:layout_below="@+id/textViewLang0"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="32sp"
-            android:text="lang1"
+            android:text="langForeign"
             android:textSize="50sp" />
 
         <LinearLayout

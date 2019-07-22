@@ -1,8 +1,8 @@
 package com.dparnold.audiovocabulary;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Handler;
 
 import android.content.Intent;
@@ -10,33 +10,24 @@ import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dparnold.audiovocabulary.helper.ReadVocablePackage;
-import com.dparnold.audiovocabulary.helper.Util;
+import com.dparnold.audiovocabulary.Helper.ReadVocablePackage;
+import com.dparnold.audiovocabulary.Helper.Util;
+import com.dparnold.audiovocabulary.Helper.WebData;
 
-
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
-
-import static android.R.attr.fingerprintAuthDrawable;
-import static android.R.attr.id;
-import static android.support.v4.os.LocaleListCompat.create;
-import static com.dparnold.audiovocabulary.R.id.sleepNumberPicker;
-import static com.dparnold.audiovocabulary.Settings.SETTINGS_NAME;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -83,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         getSettings();
 
         db = com.dparnold.audiovocabulary.AppDatabase.getAppDatabase(this);
+        db.vocableDAO().nukeTable(); //############################################################
         // Checking for vocabulary that is due
         db.vocableDAO().updateDue(timestamp.getTime());
         // Getting the vocables from the database
@@ -93,12 +85,13 @@ public class MainActivity extends AppCompatActivity {
         if (vocables.isEmpty()) {
             ReadVocablePackage csvReader = new ReadVocablePackage(this, R.raw.package1);
             try {
-                vocables = csvReader.read();
+                vocables = csvReader.fromTextFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            db.vocableDAO().insertAll(vocables);
-            Log.i("Info:","Data read from the package file.");
+            //#################
+            new DownloadWebTask().execute("https://www.spanishdict.com/lists/334717/body-kitchen");
+            Log.i("Info:","Data fromTextFile from the package file.");
         }
         else {Log.i("Info:","Data successfully loaded from the database."); }// Info
 
@@ -192,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     mediaPlayer.start();
-                    textViewLang0.setText(vocables.get(vocablesIndex).getLang0());
+                    textViewLang0.setText(vocables.get(vocablesIndex).getLangKnown());
                 }
             }
         };
@@ -209,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
                                     + Util.int2StringDigits(vocables.get(vocablesIndex).getID(), 3),
                             "raw", "com.dparnold.audiovocabulary");
                     mediaPlayer = MediaPlayer.create(MainActivity.this, resource);
-                    textViewLang1.setText(vocables.get(vocablesIndex).getLang1());
+                    textViewLang1.setText(vocables.get(vocablesIndex).getLangForeign());
                     // Next vocable in the list
                     if (vocablesIndex == vocables.size() - 1) {
                         vocablesIndex = 0;
@@ -342,4 +335,11 @@ public class MainActivity extends AppCompatActivity {
         playButton.setImageResource(R.drawable.ic_play);
     }
 
+    // The downloadin process has to be an async task
+    private class DownloadWebTask extends AsyncTask<String, Void, Void> {
+        protected Void doInBackground(String ... url) {
+            db.vocableDAO().insertAll(ReadVocablePackage.fromStringList(WebData.getVocabulary(url[0])));
+            return null;
+        }
+    }
 }

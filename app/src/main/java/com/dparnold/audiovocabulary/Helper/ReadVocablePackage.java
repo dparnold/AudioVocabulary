@@ -1,12 +1,10 @@
-package com.dparnold.audiovocabulary.helper;
+package com.dparnold.audiovocabulary.Helper;
 
 import android.content.Context;
-import android.content.res.Resources;
 
 import com.dparnold.audiovocabulary.Vocable;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,13 +14,6 @@ import java.util.List;
 /**
  * Created by dominik on 2/1/18.
  */
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ReadVocablePackage {
     Context context;
@@ -34,7 +25,7 @@ public class ReadVocablePackage {
         this.fileName = fileName;
     }
 
-    public List<Vocable> read() throws IOException {
+    public List<Vocable> fromTextFile() throws IOException {
         InputStream is = context.getResources().openRawResource(fileName);//context.getAssets().open(fileName);
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
@@ -45,8 +36,17 @@ public class ReadVocablePackage {
 
         while ((line = br.readLine()) != null) {
             String[] row = line.split(csvSplitBy);
-            Vocable vocable = new Vocable(Integer.parseInt(row[0]),row[1],row[2]);
+            Vocable vocable = new Vocable(row[1],row[2]);
            vocablePackage.add(vocable);
+        }
+        return vocablePackage;
+    }
+    public static List<Vocable> fromStringList(List<String> stringList){
+        List<Vocable>vocablePackage = new ArrayList<>();
+        int i=0;
+        while (i < stringList.size()){
+            vocablePackage.add(new Vocable(stringList.get(i),stringList.get(i+1)));
+            i+=2;
         }
         return vocablePackage;
     }
