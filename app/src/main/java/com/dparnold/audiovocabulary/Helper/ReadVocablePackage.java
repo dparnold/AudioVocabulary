@@ -45,7 +45,7 @@ public class ReadVocablePackage {
         List<Vocable>vocablePackage = new ArrayList<>();
         int i=0;
         while (i < stringList.size()){
-            vocablePackage.add(new Vocable(stringList.get(i),stringList.get(i+1)));
+            vocablePackage.add(new Vocable(stringList.get(i+1),stringList.get(i)));
             i+=2;
         }
         return vocablePackage;

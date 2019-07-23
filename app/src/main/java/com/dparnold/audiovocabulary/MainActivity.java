@@ -74,7 +74,8 @@ public class MainActivity extends AppCompatActivity {
         getSettings();
 
         db = com.dparnold.audiovocabulary.AppDatabase.getAppDatabase(this);
-        db.vocableDAO().nukeTable(); //############################################################
+        db.vocableDAO().nukeTable();
+        WebData.downloadFile(getApplicationContext());//############################################################
         // Checking for vocabulary that is due
         db.vocableDAO().updateDue(timestamp.getTime());
         // Getting the vocables from the database
@@ -140,6 +141,15 @@ public class MainActivity extends AppCompatActivity {
             stopPlayback();
         }
         startActivity(new Intent(MainActivity.this, com.dparnold.audiovocabulary.VocableList.class));
+    }
+    public void toTest1 (View view){
+        startActivity(new Intent(MainActivity.this, Settings.class));
+    }
+    public void toTest2 (View view){
+        startActivity(new Intent(MainActivity.this, Settings.class));
+    }
+    public void toTest3 (View view){
+        startActivity(new Intent(MainActivity.this, Settings.class));
     }
 
 
@@ -339,6 +349,7 @@ public class MainActivity extends AppCompatActivity {
     private class DownloadWebTask extends AsyncTask<String, Void, Void> {
         protected Void doInBackground(String ... url) {
             db.vocableDAO().insertAll(ReadVocablePackage.fromStringList(WebData.getVocabulary(url[0])));
+            WebData.downloadFile(getApplicationContext());
             return null;
         }
     }
