@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, com.dparnold.audiovocabulary.VocableList.class));
     }
     public void toTest1 (View view){
-        startActivity(new Intent(MainActivity.this, Settings.class));
+        startActivity(new Intent(MainActivity.this, FileDownload.class));
     }
     public void toTest2 (View view){
         startActivity(new Intent(MainActivity.this, Settings.class));
