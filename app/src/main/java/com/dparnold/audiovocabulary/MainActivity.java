@@ -1,12 +1,17 @@
 package com.dparnold.audiovocabulary;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.os.Handler;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dparnold.audiovocabulary.Helper.ReadVocablePackage;
+import com.dparnold.audiovocabulary.Helper.SpanishDict;
 import com.dparnold.audiovocabulary.Helper.Util;
 import com.dparnold.audiovocabulary.Helper.WebData;
 
@@ -54,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
     private Runnable secondRunnable;
     private int vocablesIndex = 0;
     private List<Vocable> vocables;
-    private TextView textViewLang0;
-    private TextView textViewLang1;
+    private TextView textViewLangKnown;
+    private TextView textViewLangForeign;
     private int sleepDelay = 20;
     private Timestamp timestamp;
     private Runnable sleepRunnable;
@@ -66,7 +72,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        // Requesting Permissions
+        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission is not granted
+            ActivityCompat.requestPermissions(MainActivity.this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    1); // request code can be arbitrary
+        }
         // Getting a timestamp for the current session
         timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -75,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
         db = com.dparnold.audiovocabulary.AppDatabase.getAppDatabase(this);
         db.vocableDAO().nukeTable();
-        WebData.downloadFile(getApplicationContext());//############################################################
+        //WebData.downloadFile(getApplicationContext());//############################################################
         // Checking for vocabulary that is due
         db.vocableDAO().updateDue(timestamp.getTime());
         // Getting the vocables from the database
@@ -91,15 +104,16 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             //#################
-            new DownloadWebTask().execute("https://www.spanishdict.com/lists/334717/body-kitchen");
+            SpanishDict newDict =new SpanishDict();
+            newDict.addVocabularyToDatabase(db,"https://www.spanishdict.com/lists/334717/body-kitchen");
             Log.i("Info:","Data fromTextFile from the package file.");
         }
         else {Log.i("Info:","Data successfully loaded from the database."); }// Info
 
-        textViewLang0 = findViewById(R.id.textViewLang0);
-        textViewLang1 = findViewById(R.id.textViewLang1);
-        textViewLang0.setText("Welcome!");
-        textViewLang1.setText("¡Bienvenidos!");
+        textViewLangKnown = findViewById(R.id.textViewlangKnown);
+        textViewLangForeign = findViewById(R.id.textViewlangForeign);
+        textViewLangKnown.setText("Welcome!");
+        textViewLangForeign.setText("¡Bienvenidos!");
 
         wakeLockButton = findViewById(R.id.wakeLockButton);
         wakeLockButton.setOnClickListener(new View.OnClickListener() {
@@ -181,11 +195,15 @@ public class MainActivity extends AppCompatActivity {
                         mediaPlayer.release();
                         mediaPlayer = null;
                     }
-                    textViewLang1.setText("");
-                    final int resource = MainActivity.this.getResources().getIdentifier("package1_en_"
-                                    + Util.int2StringDigits(vocables.get(vocablesIndex).getID(), 3),
-                            "raw", "com.dparnold.audiovocabulary");
-                    mediaPlayer = MediaPlayer.create(MainActivity.this, resource);
+                    textViewLangForeign.setText("");
+                    String filePath = Environment.getExternalStorageDirectory()+"/MyAppFolder/"+SpanishDict.convertAudioStrings(vocables.get(vocablesIndex).getLangKnown())+".mp3";
+                    mediaPlayer = new MediaPlayer();
+                    try {
+                        mediaPlayer.setDataSource(filePath);
+                        mediaPlayer.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                         @Override
                         public void onCompletion(MediaPlayer mediaPlayer) {
@@ -195,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     mediaPlayer.start();
-                    textViewLang0.setText(vocables.get(vocablesIndex).getLangKnown());
+                    textViewLangKnown.setText(vocables.get(vocablesIndex).getLangKnown());
                 }
             }
         };
@@ -208,11 +226,15 @@ public class MainActivity extends AppCompatActivity {
                         mediaPlayer.release();
                         mediaPlayer = null;
                     }
-                    final int resource = MainActivity.this.getResources().getIdentifier("package1_es_"
-                                    + Util.int2StringDigits(vocables.get(vocablesIndex).getID(), 3),
-                            "raw", "com.dparnold.audiovocabulary");
-                    mediaPlayer = MediaPlayer.create(MainActivity.this, resource);
-                    textViewLang1.setText(vocables.get(vocablesIndex).getLangForeign());
+                    String filePath = Environment.getExternalStorageDirectory()+"/MyAppFolder/"+SpanishDict.convertAudioStrings(vocables.get(vocablesIndex).getLangForeign())+".mp3";
+                    mediaPlayer = new  MediaPlayer();
+                    try {
+                        mediaPlayer.setDataSource(filePath);
+                        mediaPlayer.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    textViewLangForeign.setText(vocables.get(vocablesIndex).getLangForeign());
                     // Next vocable in the list
                     if (vocablesIndex == vocables.size() - 1) {
                         vocablesIndex = 0;
@@ -227,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onCompletion(MediaPlayer mediaPlayer) {
 
                             // Starting with the word in the known language again
-                            textViewLang0.setText("");
+                            textViewLangKnown.setText("");
                             playHandler.postDelayed(firstRunnable, delay);
 
                         }
@@ -340,8 +362,8 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer.stop();
         mediaPlayer.release();
         mediaPlayer = null;
-        textViewLang0.setText("");
-        textViewLang1.setText("");
+        textViewLangKnown.setText("");
+        textViewLangForeign.setText("");
         playButton.setImageResource(R.drawable.ic_play);
     }
 
@@ -349,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
     private class DownloadWebTask extends AsyncTask<String, Void, Void> {
         protected Void doInBackground(String ... url) {
             db.vocableDAO().insertAll(ReadVocablePackage.fromStringList(WebData.getVocabulary(url[0])));
-            WebData.downloadFile(getApplicationContext());
+            //WebData.downloadFile(getApplicationContext());
             return null;
         }
     }

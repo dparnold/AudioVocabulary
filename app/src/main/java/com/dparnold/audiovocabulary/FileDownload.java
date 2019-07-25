@@ -1,12 +1,10 @@
 package com.dparnold.audiovocabulary;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
@@ -18,7 +16,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.dparnold.audiovocabulary.Helper.Util;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -51,7 +48,7 @@ public class FileDownload extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         imageView.setImageResource(R.drawable.ic_sleep);
         errorToast=new Toast(FileDownload.this);
-        errorToast.makeText(FileDownload.this,"Nothing happened in the download function", Toast.LENGTH_LONG).show();
+        //errorToast.makeText(FileDownload.this,"Nothing happened in the download function", Toast.LENGTH_LONG).show();
     }
 
 
@@ -90,7 +87,7 @@ public class FileDownload extends AppCompatActivity {
                 int lenghtOfFile = conexion.getContentLength();
                 // download the file
                 InputStream input = new BufferedInputStream(url.openStream());
-                String filePath=Environment.getExternalStorageDirectory()+"/audio.mp3";
+                String filePath=Environment.getExternalStorageDirectory()+"/audio2.mp3";
                 OutputStream output = new FileOutputStream(filePath);
 
                 byte data[] = new byte[1024];
