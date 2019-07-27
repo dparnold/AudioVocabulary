@@ -87,8 +87,7 @@ public class MainActivity extends AppCompatActivity {
         getSettings();
 
         db = com.dparnold.audiovocabulary.AppDatabase.getAppDatabase(this);
-        db.vocableDAO().nukeTable();
-        //WebData.downloadFile(getApplicationContext());//############################################################
+        //db.vocableDAO().nukeTable();
         // Checking for vocabulary that is due
         db.vocableDAO().updateDue(timestamp.getTime());
         // Getting the vocables from the database
@@ -103,9 +102,8 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //#################
             SpanishDict newDict =new SpanishDict();
-            newDict.addVocabularyToDatabase(db,"https://www.spanishdict.com/lists/334717/body-kitchen");
+            newDict.addVocabularyToDatabase(db,"https://www.spanishdict.com/lists/344204/verbs");
             Log.i("Info:","Data fromTextFile from the package file.");
         }
         else {Log.i("Info:","Data successfully loaded from the database."); }// Info

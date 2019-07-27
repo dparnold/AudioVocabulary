@@ -3,6 +3,7 @@ package com.dparnold.audiovocabulary.Helper;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.dparnold.audiovocabulary.AppDatabase;
@@ -61,6 +62,10 @@ public class SpanishDict {
                 conexion.connect();
                 // this will be useful so that you can show a tipical 0-100% progress bar
                 int lenghtOfFile = conexion.getContentLength();
+                if(lenghtOfFile==0){
+                    Log.d("MissingAudioFile",urlParams[0]+urlParams[1]);
+                }
+                Log.d("Downloading",urlParams[0]+urlParams[1]);
                 // download the file
                 InputStream input = new BufferedInputStream(url.openStream());
 
