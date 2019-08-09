@@ -16,5 +16,6 @@
         <item>90</item>
         <item>100</item>
     </string-array>
+    <string name="title_activity_vocable_packages">VocablePackages</string>
 
 </resources>

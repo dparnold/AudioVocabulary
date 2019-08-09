@@ -1,18 +1,13 @@
 package com.dparnold.audiovocabulary;
 
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
-import android.widget.ToggleButton;
-
-import com.dparnold.audiovocabulary.R;
 
 public class Settings extends AppCompatActivity {
     // File where the settings are saved.
@@ -21,7 +16,7 @@ public class Settings extends AppCompatActivity {
     private SharedPreferences settings;
 
     // Different views that have the settings values
-    private Switch testSwitch;
+    private Switch screenOnSwitch;
     private Spinner vocablesNumber;
     private EditText editTextDelay;
 
@@ -36,8 +31,8 @@ public class Settings extends AppCompatActivity {
         settings = getSharedPreferences(SETTINGS_NAME, 0);
 
         // Set the values of the views to the settings values
-        testSwitch =  findViewById(R.id.isittrue);
-        testSwitch.setChecked(settings.getBoolean("testValue", false)); // Default value is false
+        screenOnSwitch =  findViewById(R.id.keepScreenOn);
+        screenOnSwitch.setChecked(settings.getBoolean("screenOn", false)); // Default value is false
         vocablesNumber = findViewById(R.id.spinner);
         vocablesNumber.setSelection(settings.getInt("vocablesNumber",1));
         editTextDelay =  findViewById(R.id.editTextDelay);
@@ -50,7 +45,7 @@ public class Settings extends AppCompatActivity {
         SharedPreferences.Editor editor = settings.edit();
 
         // Write the values from the views to the editor
-        editor.putBoolean("testValue", testSwitch.isChecked());
+        editor.putBoolean("screenOn", screenOnSwitch.isChecked());
         editor.putFloat("delay",Float.valueOf(editTextDelay.getText().toString()));
         // Commit the edits
         editor.commit();

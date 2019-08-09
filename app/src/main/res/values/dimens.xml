@@ -2,4 +2,5 @@
 <resources>
     <dimen name="buttonSize">24dp</dimen>
     <dimen name="buttonMargin">8dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

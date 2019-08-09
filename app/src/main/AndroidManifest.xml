@@ -14,7 +14,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FileDownload"></activity>
+        <activity
+            android:name=".VocablePackages"
+            android:label="@string/title_activity_vocable_packages"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".FileDownload" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">

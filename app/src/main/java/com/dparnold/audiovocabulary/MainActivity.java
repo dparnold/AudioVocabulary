@@ -26,7 +26,6 @@ import android.widget.Toast;
 
 import com.dparnold.audiovocabulary.Helper.ReadVocablePackage;
 import com.dparnold.audiovocabulary.Helper.SpanishDict;
-import com.dparnold.audiovocabulary.Helper.Util;
 import com.dparnold.audiovocabulary.Helper.WebData;
 
 
@@ -47,10 +46,10 @@ public class MainActivity extends AppCompatActivity {
 
     private int fileNumber = 1;
     private ImageButton playButton;
-    private ImageButton wakeLockButton;
+    private ImageButton keepScreenOnButton;
     private ImageButton sleepTimerButton;
     private boolean playing = false;
-    private boolean wakeLock = false;
+    private boolean keepScreenOn = false;
     private boolean sleepTimerOn = false;
     private MediaPlayer mediaPlayer;
     private com.dparnold.audiovocabulary.AppDatabase db;
@@ -83,8 +82,7 @@ public class MainActivity extends AppCompatActivity {
         // Getting a timestamp for the current session
         timestamp = new Timestamp(System.currentTimeMillis());
 
-        // Get settings
-        getSettings();
+
 
         db = com.dparnold.audiovocabulary.AppDatabase.getAppDatabase(this);
         //db.vocableDAO().nukeTable();
@@ -113,13 +111,16 @@ public class MainActivity extends AppCompatActivity {
         textViewLangKnown.setText("Welcome!");
         textViewLangForeign.setText("¡Bienvenidos!");
 
-        wakeLockButton = findViewById(R.id.wakeLockButton);
-        wakeLockButton.setOnClickListener(new View.OnClickListener() {
+        keepScreenOnButton = findViewById(R.id.wakeLockButton);
+        keepScreenOnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleWakeLock(v);
+                toggleKeepScreenOn(v);
             }
         });
+
+        // Get settings
+        getSettings();
 
         sleepTimerButton = findViewById(R.id.sleepTimerButton);
 
@@ -148,6 +149,10 @@ public class MainActivity extends AppCompatActivity {
     public void toSettings (View view){
         startActivity(new Intent(MainActivity.this, Settings.class));
     }
+    public void turnOff(View view){
+        int pid = android.os.Process.myPid();
+        android.os.Process.killProcess(pid);
+    }
     public void toVocabList (View view){
         if(playing){
             stopPlayback();
@@ -158,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, FileDownload.class));
     }
     public void toTest2 (View view){
-        startActivity(new Intent(MainActivity.this, Settings.class));
+        startActivity(new Intent(MainActivity.this, VocablePackages.class));
     }
     public void toTest3 (View view){
         startActivity(new Intent(MainActivity.this, Settings.class));
@@ -264,6 +269,9 @@ public class MainActivity extends AppCompatActivity {
         // 0 signifies the standard operating mode
         settings = getSharedPreferences(SETTINGS_NAME, 0);
         delay = (int) settings.getFloat("delay",(float)1.0)*1000;
+        if (settings.getBoolean("screenOn",false)!= keepScreenOn){
+            toggleKeepScreenOn(keepScreenOnButton);
+        }
     }
 
     void sleepTimer (View view){
@@ -336,15 +344,15 @@ public class MainActivity extends AppCompatActivity {
         });
        alertDialog.show();
     }
-    void toggleWakeLock(View view){
-        wakeLock = !wakeLock;
-        if(wakeLock){
+    void toggleKeepScreenOn(View view){
+        keepScreenOn = !keepScreenOn;
+        if(keepScreenOn){
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             View root = findViewById(android.R.id.content);
             if (root != null)
                 root.setKeepScreenOn(true);
             Toast.makeText(getApplicationContext(),"Screen will not be locked",Toast.LENGTH_SHORT).show();
-            wakeLockButton.setImageResource(R.drawable.ic_unlock);
+            keepScreenOnButton.setImageResource(R.drawable.ic_unlock);
         }
         else{
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -352,7 +360,7 @@ public class MainActivity extends AppCompatActivity {
             if (root != null)
                 root.setKeepScreenOn(false);
             Toast.makeText(getApplicationContext(),"Screen will lock automatically", Toast.LENGTH_SHORT).show();
-            wakeLockButton.setImageResource(R.drawable.ic_lock);
+            keepScreenOnButton.setImageResource(R.drawable.ic_lock);
         }
     }
     private void stopPlayback(){
