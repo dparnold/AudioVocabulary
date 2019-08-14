@@ -25,7 +25,7 @@ public class ReadVocablePackage {
         this.fileName = fileName;
     }
 
-    public List<Vocable> fromTextFile() throws IOException {
+    public List<Vocable> fromTextFile(String packageOrigin, String packageName) throws IOException {
         InputStream is = context.getResources().openRawResource(fileName);//context.getAssets().open(fileName);
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
@@ -36,16 +36,16 @@ public class ReadVocablePackage {
 
         while ((line = br.readLine()) != null) {
             String[] row = line.split(csvSplitBy);
-            Vocable vocable = new Vocable(row[1],row[2]);
+            Vocable vocable = new Vocable(packageOrigin, packageName,row[1],row[2]);
            vocablePackage.add(vocable);
         }
         return vocablePackage;
     }
-    public static List<Vocable> fromStringList(List<String> stringList){
+    public static List<Vocable> fromStringList(String packageOrigin, String packageName, List<String> stringList){
         List<Vocable>vocablePackage = new ArrayList<>();
         int i=0;
         while (i < stringList.size()){
-            vocablePackage.add(new Vocable(stringList.get(i+1),stringList.get(i)));
+            vocablePackage.add(new Vocable(packageOrigin, packageName, stringList.get(i+1),stringList.get(i)));
             i+=2;
         }
         return vocablePackage;

@@ -10,6 +10,12 @@ public class Vocable {
     @PrimaryKey(autoGenerate = true)
     private int ID;
 
+    @ColumnInfo(name = "packageOrigin")
+    private String packageOrigin;
+
+    @ColumnInfo(name = "packageName")
+    private String packageName;
+
     @ColumnInfo(name = "langKnown")
     private String langKnown;
 
@@ -31,9 +37,11 @@ public class Vocable {
     @ColumnInfo(name = "learnNextTime")
     private long learnNextTime;
 
-    public Vocable(String langKnown, String langForeign){
+    public Vocable(String packageOrigin, String packageName, String langKnown, String langForeign){
         this.langKnown = langKnown;
         this.langForeign = langForeign;
+        this.packageOrigin = packageOrigin;
+        this.packageName = packageName;
     }
 
     public boolean isToListen() {
@@ -100,5 +108,19 @@ public class Vocable {
         this.learnNextTime = learnNextTime;
     }
 
+    public String getPackageOrigin() {
+        return packageOrigin;
+    }
 
+    public void setPackageOrigin(String packageOrigin) {
+        this.packageOrigin = packageOrigin;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
 }

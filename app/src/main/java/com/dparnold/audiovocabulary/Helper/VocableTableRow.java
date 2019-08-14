@@ -11,7 +11,7 @@ import android.widget.TextView;
  */
 
 public class VocableTableRow {
-    public static TableRow getTableRow(Context context, int ID, String lang0, String lang1, boolean due, int score, int timesStudied){
+    public static TableRow getTableRow(Context context, int ID, String lang0, String lang1, boolean due, int score, int timesStudied, String packageOrigin, String packageName){
         TableRow tableRow = new TableRow(context);
         tableRow.setBackgroundColor(Color.parseColor("#000000"));
         tableRow.setPadding(1,0,1,1);
@@ -53,10 +53,22 @@ public class VocableTableRow {
         timesStudiedText.setPadding(16,16,16,0);
         timesStudiedText.setBackgroundColor(Color.parseColor("#FFFFFF"));
         tableRow.addView(timesStudiedText);
+
+        TextView packageOriginText = new TextView(context);
+        packageOriginText.setText(packageOrigin);
+        packageOriginText.setPadding(16,16,16,0);
+        packageOriginText.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        tableRow.addView(packageOriginText);
+
+        TextView packageNameText = new TextView(context);
+        packageNameText.setText(packageName);
+        packageNameText.setPadding(16,16,16,0);
+        packageNameText.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        tableRow.addView(packageNameText);
         return tableRow;
     }
 
-    public static TableRow getHeaderTableRow(Context context, String ID, String lang0, String lang1, String due, String score, String timesStudied){
+    public static TableRow getHeaderTableRow(Context context, String ID, String lang0, String lang1, String due, String score, String timesStudied, String packageOrigin, String packageName){
         TableRow tableRow = new TableRow(context);
         tableRow.setBackgroundColor(Color.parseColor("#000000"));
         tableRow.setPadding(1,0,1,8);
@@ -103,6 +115,21 @@ public class VocableTableRow {
         timesStudiedText.setPadding(16,16,16,0);
         timesStudiedText.setBackgroundColor(Color.parseColor("#FFFFFF"));
         tableRow.addView(timesStudiedText);
+
+        TextView packageOriginText = new TextView(context);
+        packageOriginText.setTypeface(null, Typeface.BOLD);
+        packageOriginText.setText(packageOrigin);
+        packageOriginText.setPadding(16,16,16,0);
+        packageOriginText.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        tableRow.addView(packageOriginText);
+
+        TextView packageNameText = new TextView(context);
+        packageNameText.setTypeface(null, Typeface.BOLD);
+        packageNameText.setText(packageName);
+        packageNameText.setPadding(16,16,16,0);
+        packageNameText.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        tableRow.addView(packageNameText);
+
         return tableRow;
     }
 }

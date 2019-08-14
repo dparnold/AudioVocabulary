@@ -8,7 +8,7 @@ import android.content.Context;
 import com.dparnold.audiovocabulary.VocableDAO;
 
 
-@Database(entities = {Vocable.class}, version = 9)
+@Database(entities = {Vocable.class}, version = 10)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;

@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean playing = false;
     private boolean keepScreenOn = false;
     private boolean sleepTimerOn = false;
+    private boolean starting = true;
+    private boolean firstStart = true;
     private MediaPlayer mediaPlayer;
     private com.dparnold.audiovocabulary.AppDatabase db;
     private Handler playHandler = new Handler();
@@ -75,10 +77,9 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    1); // request code can be arbitrary
-        }
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1); // request code can be arbitrary
+            firstStart= false;
+            }
         // Getting a timestamp for the current session
         timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -96,12 +97,13 @@ public class MainActivity extends AppCompatActivity {
         if (vocables.isEmpty()) {
             ReadVocablePackage csvReader = new ReadVocablePackage(this, R.raw.package1);
             try {
-                vocables = csvReader.fromTextFile();
+                vocables = csvReader.fromTextFile("Text","sample");
             } catch (IOException e) {
                 e.printStackTrace();
             }
             SpanishDict newDict =new SpanishDict();
             newDict.addVocabularyToDatabase(db,"https://www.spanishdict.com/lists/344204/verbs");
+            //newDict.addVocabularyToDatabase(db,"https://www.spanishdict.com/lists/355371/verbs2");
             Log.i("Info:","Data fromTextFile from the package file.");
         }
         else {Log.i("Info:","Data successfully loaded from the database."); }// Info
@@ -148,6 +150,9 @@ public class MainActivity extends AppCompatActivity {
     }
     public void toSettings (View view){
         startActivity(new Intent(MainActivity.this, Settings.class));
+    }
+    public void toVocablePackages (View view){
+        startActivity(new Intent(MainActivity.this, VocablePackages.class));
     }
     public void turnOff(View view){
         int pid = android.os.Process.myPid();
@@ -349,16 +354,18 @@ public class MainActivity extends AppCompatActivity {
         if(keepScreenOn){
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             View root = findViewById(android.R.id.content);
-            if (root != null)
+            if (root != null){
                 root.setKeepScreenOn(true);
-            Toast.makeText(getApplicationContext(),"Screen will not be locked",Toast.LENGTH_SHORT).show();
+            }
+            if(starting != true){
+                Toast.makeText(getApplicationContext(),"Screen will not be locked",Toast.LENGTH_SHORT).show();}
             keepScreenOnButton.setImageResource(R.drawable.ic_unlock);
         }
         else{
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             View root = findViewById(android.R.id.content);
-            if (root != null)
-                root.setKeepScreenOn(false);
+            if (root != null){
+                root.setKeepScreenOn(false);}
             Toast.makeText(getApplicationContext(),"Screen will lock automatically", Toast.LENGTH_SHORT).show();
             keepScreenOnButton.setImageResource(R.drawable.ic_lock);
         }
@@ -371,14 +378,5 @@ public class MainActivity extends AppCompatActivity {
         textViewLangKnown.setText("");
         textViewLangForeign.setText("");
         playButton.setImageResource(R.drawable.ic_play);
-    }
-
-    // The downloadin process has to be an async task
-    private class DownloadWebTask extends AsyncTask<String, Void, Void> {
-        protected Void doInBackground(String ... url) {
-            db.vocableDAO().insertAll(ReadVocablePackage.fromStringList(WebData.getVocabulary(url[0])));
-            //WebData.downloadFile(getApplicationContext());
-            return null;
-        }
     }
 }

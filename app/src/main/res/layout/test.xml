@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="top"
+    tools:context="com.dparnold.audiovocabulary.MainActivity">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.constraint.ConstraintLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_baseline_power_settings_new_24px"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBottom="@id/studyButton"
+        android:adjustViewBounds="true"
+        android:scaleType="fitStart"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/studyButton"
+        android:layout_alignTop="@id/selectButton"
+        android:layout_alignBottom="@id/selectButton"
+        android:text="asdfjkasldöfjasjflasdf "/>
+    <Button
+        android:id="@+id/selectButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"/>
+    <Button
+        android:id="@+id/studyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Study"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/selectButton"/>
+</android.support.constraint.ConstraintLayout>

@@ -25,13 +25,15 @@ import java.util.List;
 
 public class SpanishDict {
     AppDatabase db;
-    String url;
-    String audioDownloadString = "";
+    private String url;
+    private String packageName;
+    private String audioDownloadString = "";
     final String audioForeignUrl = "https://audio1.spanishdict.com/audio?lang=es&text=";
     final String audioKnownUrl = "https://audio1.spanishdict.com/audio?lang=en&text=";
     public void addVocabularyToDatabase (AppDatabase db, String url){
         this.db = db;
         this.url = url;
+        this.packageName =getPackageNameFromURl(url);
         new DownloadWebTask().execute(url);
     }
     public static ArrayList<String> downloadVocabularyArray(String URL){
@@ -96,7 +98,8 @@ public class SpanishDict {
         // empty constructor
         }
         protected Void doInBackground(String ... Void) {
-            db.vocableDAO().insertAll(ReadVocablePackage.fromStringList(downloadVocabularyArray(url)));
+            ArrayList<String> vocableList = downloadVocabularyArray(url);
+            db.vocableDAO().insertAll(ReadVocablePackage.fromStringList("SpanishDict", packageName ,vocableList));
             return null;
         }
 
@@ -111,7 +114,6 @@ public class SpanishDict {
             }
         }
     }
-
     public static String convertAudioStrings(String inputString){
         String outputString = inputString.replace(' ', '-');
         outputString=outputString.replace("el-","");
@@ -139,5 +141,11 @@ public class SpanishDict {
             }
         }
         return all;
+    }
+    private String getPackageNameFromURl (String url){
+        // Input: https://www.spanishdict.com/lists/344204/verbs
+        String[] resultList = url.split("/");
+        // Output: 344204/verbs
+        return resultList[resultList.length-2]+"/"+resultList[resultList.length-1];
     }
 }

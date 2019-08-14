@@ -133,7 +133,7 @@
             android:layout_height="wrap_content"
             android:text="testPage3"
             android:layout_above="@id/bottomBar"
-            android:onClick="toTest3"/>
+            android:onClick="toVocablePackages"/>
 
         <LinearLayout
             android:id="@+id/bottomBar"
