@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         db = com.dparnold.audiovocabulary.AppDatabase.getAppDatabase(this);
         //db.vocableDAO().nukeTable();
 
-        db.vocableDAO().updateDue(timestamp.getTime());  // Checking for vocabulary that is due
+
 
 
 
@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
             // Shuffling the list
             Collections.shuffle(vocables);
             // If that fails, import the data to the database
+            db.vocableDAO().updateDue(timestamp.getTime());  // Checking for vocabulary that is due
         }
 
 
