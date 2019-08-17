@@ -19,11 +19,17 @@ public interface VocableDAO {
     List<Vocable> loadAllByIds(int[] IDs);
 
     // Needs to be split up in getTestVocables and getAudioVocables
-    @Query("SELECT * FROM vocable WHERE toTest = 1 ORDER BY score DESC, timesStudied DESC LIMIT (:number)")
-    List<Vocable> getMostRelevant(int number);
+    @Query("SELECT * FROM vocable WHERE toTest = 1 AND packageName = (:packageName) ORDER BY score DESC, timesStudied DESC LIMIT (:number)")
+    List<Vocable> getMostRelevant(int number, String packageName);
 
     @Query("UPDATE vocable SET toTest = 1 WHERE learnNextTime < (:timestamp) AND score <6")
     void updateDue(long timestamp);
+
+    @Query("SELECT DISTINCT packageName FROM vocable")
+    List<String> getPackageNames();
+
+    @Query("SELECT COUNT(packageName) FROM vocable WHERE packageName = (:packageName)")
+    int countVocablesInPackage(String packageName);
 
     @Insert
     void insertAll(List<Vocable> vocables); //Vocable...

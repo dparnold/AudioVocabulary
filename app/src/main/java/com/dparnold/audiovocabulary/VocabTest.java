@@ -1,6 +1,7 @@
 package com.dparnold.audiovocabulary;
 
 
+import android.content.SharedPreferences;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import static android.media.CamcorderProfile.get;
 
 public class VocabTest extends AppCompatActivity {
     private final long MILLISDAY = 24*60*60*1000;
+    private String currentVocablePackage;
 
     private LinearLayout buttonLayout;
     private Button showButton;
@@ -36,12 +38,17 @@ public class VocabTest extends AppCompatActivity {
     private ProgressBar rightProgress;
     private Timestamp timestamp;
     private Toast finishedToast;
+    private SharedPreferences settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_vocab_test);
         db = AppDatabase.getAppDatabase(this);
+
+        settings = getSharedPreferences(Settings.SETTINGS_NAME, 0);
+        currentVocablePackage = settings.getString("currentVocablePackage", db.vocableDAO().getPackageNames().get(0));
+
 
         // Getting a timestamp for the current session
         timestamp = new Timestamp(System.currentTimeMillis());
@@ -64,7 +71,7 @@ public class VocabTest extends AppCompatActivity {
         buttonLayout.addView(showButton);
 
         // Getting vocabulary
-        vocables=db.vocableDAO().getMostRelevant(studyNumber);
+        vocables=db.vocableDAO().getMostRelevant(studyNumber,currentVocablePackage);
 
         // Shuffling the list
         Collections.shuffle(vocables);

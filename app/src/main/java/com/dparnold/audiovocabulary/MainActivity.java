@@ -4,7 +4,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 
@@ -26,7 +25,6 @@ import android.widget.Toast;
 
 import com.dparnold.audiovocabulary.Helper.ReadVocablePackage;
 import com.dparnold.audiovocabulary.Helper.SpanishDict;
-import com.dparnold.audiovocabulary.Helper.WebData;
 
 
 import java.io.IOException;
@@ -39,10 +37,10 @@ public class MainActivity extends AppCompatActivity {
 
     int mostRelevant= 30;
 
-    // File where the settings are saved.
-    public static final String SETTINGS_NAME = "AppSettings";
     // The Preferences object
     private SharedPreferences settings;
+
+    private String currentVocablePackage = "344204/verbs";
 
     private int fileNumber = 1;
     private ImageButton playButton;
@@ -73,13 +71,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
         // Requesting Permissions
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1); // request code can be arbitrary
-            firstStart= false;
             }
+
+        settings = getSharedPreferences(Settings.SETTINGS_NAME, 0);
+        SharedPreferences.Editor settingsEditor = settings.edit();
+        getSettings();
+
+
         // Getting a timestamp for the current session
         timestamp = new Timestamp(System.currentTimeMillis());
 
@@ -87,26 +92,26 @@ public class MainActivity extends AppCompatActivity {
 
         db = com.dparnold.audiovocabulary.AppDatabase.getAppDatabase(this);
         //db.vocableDAO().nukeTable();
-        // Checking for vocabulary that is due
-        db.vocableDAO().updateDue(timestamp.getTime());
-        // Getting the vocables from the database
-        vocables=db.vocableDAO().getMostRelevant(mostRelevant);
-        // Shuffling the list
-        Collections.shuffle(vocables);
-        // If that fails, import the data to the database
-        if (vocables.isEmpty()) {
-            ReadVocablePackage csvReader = new ReadVocablePackage(this, R.raw.package1);
-            try {
-                vocables = csvReader.fromTextFile("Text","sample");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
+        db.vocableDAO().updateDue(timestamp.getTime());  // Checking for vocabulary that is due
+
+
+
+        if(firstStart){
             SpanishDict newDict =new SpanishDict();
             newDict.addVocabularyToDatabase(db,"https://www.spanishdict.com/lists/344204/verbs");
-            //newDict.addVocabularyToDatabase(db,"https://www.spanishdict.com/lists/355371/verbs2");
-            Log.i("Info:","Data fromTextFile from the package file.");
+            SpanishDict newDict2 =new SpanishDict();
+            newDict2.addVocabularyToDatabase(db,"https://www.spanishdict.com/lists/334717/body-people-house");
         }
-        else {Log.i("Info:","Data successfully loaded from the database."); }// Info
+        else{
+            vocables=db.vocableDAO().getMostRelevant(mostRelevant, currentVocablePackage);  // Getting the vocables from the database
+            // Shuffling the list
+            Collections.shuffle(vocables);
+            // If that fails, import the data to the database
+        }
+
+
+
 
         textViewLangKnown = findViewById(R.id.textViewlangKnown);
         textViewLangForeign = findViewById(R.id.textViewlangForeign);
@@ -121,8 +126,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Get settings
-        getSettings();
+
 
         sleepTimerButton = findViewById(R.id.sleepTimerButton);
 
@@ -141,6 +145,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        settingsEditor.putBoolean("firstStart", false);
+        settingsEditor.commit();
     }
     public void toVocabTest(View view){
         if(playing){
@@ -181,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
         // Update the settings
         getSettings();
         // update the most relevant vocables
-        vocables=db.vocableDAO().getMostRelevant(mostRelevant);
+        vocables=db.vocableDAO().getMostRelevant(mostRelevant, currentVocablePackage);
         // Shuffling the list
         Collections.shuffle(vocables);
         }
@@ -272,11 +278,12 @@ public class MainActivity extends AppCompatActivity {
 
     void getSettings() {
         // 0 signifies the standard operating mode
-        settings = getSharedPreferences(SETTINGS_NAME, 0);
         delay = (int) settings.getFloat("delay",(float)1.0)*1000;
         if (settings.getBoolean("screenOn",false)!= keepScreenOn){
             toggleKeepScreenOn(keepScreenOnButton);
         }
+        currentVocablePackage = settings.getString("packageName", currentVocablePackage);
+        firstStart = settings.getBoolean("firstStart",true);
     }
 
     void sleepTimer (View view){

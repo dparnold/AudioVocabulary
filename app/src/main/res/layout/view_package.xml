@@ -5,48 +5,65 @@
     android:layout_height="wrap_content">
 
 
-    <TextView
-        android:id="@+id/facebookTv"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:drawableStart="@drawable/ic_lock"
-        android:drawableLeft="@drawable/ic_lock"
-        android:drawablePadding="4dp"
-        android:gravity="center_vertical"
-        android:layout_width="wrap_content"
+    <android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="was geht"/>
+        android:layout_margin="10dp">
 
-    <TextView
-        android:id="@+id/yelpTv"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:drawableStart="@drawable/ic_sleep_active"
-        android:drawableLeft="@drawable/ic_sleep_active"
-        android:drawablePadding="4dp"
-        android:gravity="center_vertical"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/facebookTv"
-        android:text="hola"/>
 
-    <TextView
-        android:id="@+id/foursquareTv"
-        android:textColor="@android:color/black"
-        android:textSize="16sp"
-        android:drawableStart="@drawable/ic_play"
-        android:drawableLeft="@drawable/ic_play"
-        android:layout_centerVertical="true"
-        android:gravity="center_vertical"
-        android:drawablePadding="4dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/yelpTv"
-        android:text="na du?"/>
+
+        <TextView
+            android:id="@+id/nameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="asdfjkasldöfjsdf asdf a "
+            app:layout_constraintBottom_toBottomOf="@id/selectButton"
+            app:layout_constraintEnd_toStartOf="@+id/selectButton"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintTop_toTopOf="@id/selectButton"
+            app:layout_constraintVertical_bias="0.296" />
+
+        <TextView
+            android:id="@+id/vocableNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="asdfjkasldöfjasjflasdf jdafkldj flasdöj öfkljasdölfj askldjföl jsdaölfk jsdölfj öklsdj flaösdf "
+            app:layout_constraintBottom_toBottomOf="@id/studyButton"
+            app:layout_constraintEnd_toStartOf="@id/selectButton"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintTop_toTopOf="@id/studyButton" />
+
+        <Button
+            android:id="@+id/selectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Select"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/studyButton"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/textView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/studyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/selectButton"
+            android:text="Study"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/selectButton"
+            tools:layout_editor_absoluteY="56dp" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/colorAccent"
+            app:layout_constraintTop_toBottomOf="@id/studyButton"
+            />
+    </android.support.constraint.ConstraintLayout>
 </merge>

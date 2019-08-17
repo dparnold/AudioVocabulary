@@ -133,7 +133,7 @@
             android:layout_height="wrap_content"
             android:text="testPage3"
             android:layout_above="@id/bottomBar"
-            android:onClick="toVocablePackages"/>
+            android:onClick="toVocabList"/>
 
         <LinearLayout
             android:id="@+id/bottomBar"
@@ -178,7 +178,7 @@
 
 
                 <ImageButton
-                    android:onClick="toVocabList"
+                    android:onClick="toVocablePackages"
                     android:src="@drawable/ic_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
