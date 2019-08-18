@@ -23,7 +23,6 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dparnold.audiovocabulary.Helper.ReadVocablePackage;
 import com.dparnold.audiovocabulary.Helper.SpanishDict;
 
 
@@ -35,17 +34,12 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    int mostRelevant= 30;
-
-    // The Preferences object
-    private SharedPreferences settings;
-
+// Still hardcoded
+    private int numberOfVocablesToStudy = 30;
     private String currentVocablePackage = "344204/verbs";
+    private int sleepTimerMinutes = 20;
 
-    private int fileNumber = 1;
-    private ImageButton playButton;
-    private ImageButton keepScreenOnButton;
-    private ImageButton sleepTimerButton;
+    private ImageButton playButton,keepScreenOnButton ,sleepTimerButton;
     private boolean playing = false;
     private boolean keepScreenOn = false;
     private boolean sleepTimerOn = false;
@@ -55,17 +49,13 @@ public class MainActivity extends AppCompatActivity {
     private com.dparnold.audiovocabulary.AppDatabase db;
     private Handler playHandler = new Handler();
     private Handler sleepHander = new Handler();
-    private Runnable firstRunnable;
-    private Runnable secondRunnable;
+    private Runnable firstRunnable, secondRunnable, sleepRunnable;
     private int vocablesIndex = 0;
+    private int delayBetweenVocables;
     private List<Vocable> vocables;
-    private TextView textViewLangKnown;
-    private TextView textViewLangForeign;
-    private int sleepDelay = 20;
+    private TextView textViewLangKnown, textViewLangForeign;
     private Timestamp timestamp;
-    private Runnable sleepRunnable;
-
-    int delay;
+    private SharedPreferences settings; // The Preferences object
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +69,16 @@ public class MainActivity extends AppCompatActivity {
             // Permission is not granted
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},1); // request code can be arbitrary
             }
+
+
+        keepScreenOnButton = findViewById(R.id.wakeLockButton);
+        keepScreenOnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleKeepScreenOn(v);
+            }
+        });
+
 
         settings = getSharedPreferences(Settings.SETTINGS_NAME, 0);
         SharedPreferences.Editor settingsEditor = settings.edit();
@@ -104,33 +104,18 @@ public class MainActivity extends AppCompatActivity {
             newDict2.addVocabularyToDatabase(db,"https://www.spanishdict.com/lists/334717/body-people-house");
         }
         else{
-            vocables=db.vocableDAO().getMostRelevant(mostRelevant, currentVocablePackage);  // Getting the vocables from the database
+            vocables=db.vocableDAO().getMostRelevant(numberOfVocablesToStudy, currentVocablePackage);  // Getting the vocables from the database
             // Shuffling the list
             Collections.shuffle(vocables);
             // If that fails, import the data to the database
             db.vocableDAO().updateDue(timestamp.getTime());  // Checking for vocabulary that is due
         }
 
-
-
-
         textViewLangKnown = findViewById(R.id.textViewlangKnown);
         textViewLangForeign = findViewById(R.id.textViewlangForeign);
         textViewLangKnown.setText("Welcome!");
         textViewLangForeign.setText("¡Bienvenidos!");
-
-        keepScreenOnButton = findViewById(R.id.wakeLockButton);
-        keepScreenOnButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toggleKeepScreenOn(v);
-            }
-        });
-
-
-
         sleepTimerButton = findViewById(R.id.sleepTimerButton);
-
         playButton=findViewById(R.id.playButton);
         playButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,6 +141,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, com.dparnold.audiovocabulary.VocabTest.class));
     }
     public void toSettings (View view){
+        if(playing){
+            stopPlayback();
+        }
         startActivity(new Intent(MainActivity.this, Settings.class));
     }
     public void toVocablePackages (View view){
@@ -188,12 +176,10 @@ public class MainActivity extends AppCompatActivity {
         // Update the settings
         getSettings();
         // update the most relevant vocables
-        vocables=db.vocableDAO().getMostRelevant(mostRelevant, currentVocablePackage);
+        vocables=db.vocableDAO().getMostRelevant(numberOfVocablesToStudy, currentVocablePackage);
         // Shuffling the list
         Collections.shuffle(vocables);
         }
-
-
 
 
     public void play(){
@@ -223,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onCompletion(MediaPlayer mediaPlayer) {
                             if (playing) {
-                                playHandler.postDelayed(secondRunnable, delay);
+                                playHandler.postDelayed(secondRunnable, delayBetweenVocables);
                             }
                         }
                     });
@@ -265,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
 
                             // Starting with the word in the known language again
                             textViewLangKnown.setText("");
-                            playHandler.postDelayed(firstRunnable, delay);
+                            playHandler.postDelayed(firstRunnable, delayBetweenVocables);
 
                         }
                     });
@@ -279,7 +265,8 @@ public class MainActivity extends AppCompatActivity {
 
     void getSettings() {
         // 0 signifies the standard operating mode
-        delay = (int) settings.getFloat("delay",(float)1.0)*1000;
+        delayBetweenVocables = (int) settings.getFloat("delayBetweenVocables",(float)1.0)*1000;
+        numberOfVocablesToStudy = settings.getInt("vocablesNumber", 30);
         if (settings.getBoolean("screenOn",false)!= keepScreenOn){
             toggleKeepScreenOn(keepScreenOnButton);
         }
@@ -340,8 +327,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 sleepTimerOn =true;
                 sleepTimerButton.setImageResource(R.drawable.ic_sleep_active);
-                sleepDelay = sleepNumberPicker.getValue()*5;
-                Log.e("info", Integer.toString(sleepDelay));
+                sleepTimerMinutes = sleepNumberPicker.getValue()*5;
+                Log.e("info", Integer.toString(sleepTimerMinutes));
 
                 sleepRunnable = new Runnable() {
                     @Override
@@ -350,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
                         System.exit(0);
                     }
                 };
-                sleepHander.postDelayed(sleepRunnable, 1000*60*sleepDelay);
+                sleepHander.postDelayed(sleepRunnable, 1000*60* sleepTimerMinutes);
                 alertDialog.dismiss();
 
             }
